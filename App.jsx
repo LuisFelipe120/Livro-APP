@@ -1,24 +1,63 @@
 import * as React from 'react';
-import { Button, Image, Text, TextInput, View } from 'react-native';
+import { Button, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import { NavigationContainer, useNavigation, useRoute } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Buscar from './components/buscar';
-import Carousel from './components/Carousel';
+import ItemCarousel from './components/CarouselItem';
  
 function HomeScreen() {
   const navigation = useNavigation();
   return (
-    <View style={{flex:1}} >
-      <View style={{flex:1}}>
+    <View style={{flex:1}}>
+    <View style={{height:70,}} >
    <Buscar/>
    </View>
-   <View style={{flex:1}}>
-   <Carousel/>
+    <View >
+    <Text style={{padding:5, fontSize: 20, fontWeight:'bold'}}>Generos</Text>
+   <ItemCarousel/>
    </View>
+      {/* Card 1: Populares */}
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Populares</Text>
+        <Text style={styles.cardDescription}>
+          Descubra os livros mais populares entre os leitores.
+        </Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            navigation.navigate('Details', {
+              itemId: 86,
+              otherParam: 'anything you want here',
+            })
+          }
+        >
+          <Text style={styles.buttonText}>Ver Detalhes</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Card 2: Mais lidas da semana */}
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Mais lidas da semana</Text>
+        <Text style={styles.cardDescription}>
+          Explore os livros mais lidos pelos usuários nesta semana.
+        </Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            navigation.navigate('Details', {
+              itemId: 86,
+              otherParam: 'anything you want here',
+            })
+          }
+        >
+          <Text style={styles.buttonText}>Ver Detalhes</Text>
+        </TouchableOpacity>
+      </View>
    </View>
   );
+
 }
  
 function LivrosScreen() {
@@ -104,3 +143,43 @@ export default function App() {
     </NavigationContainer>
   );
 }
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f9f9f9',
+    padding: 10,
+  },
+  card: {
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#333',
+  },
+  cardDescription: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 15,
+  },
+  button: {
+    backgroundColor: '#6200ee',
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
