@@ -9,7 +9,6 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
- 
 const CadastroUsuario = () => {
   const [nome, setNome] = useState('');
   const [cpf, setCpf] = useState('');
@@ -19,15 +18,14 @@ const CadastroUsuario = () => {
   const [senha, setSenha] = useState('');
   const [isAutor, setIsAutor] = useState(false);
   const [isLeitor, setIsLeitor] = useState(false);
- 
   const handleCadastro = async () => {
     if (email !== confirmarEmail) {
       Alert.alert('Erro', 'Os e-mails não coincidem.');
       return;
     }
- 
+
     try {
-      const response = await fetch('http://localhost:3000/usuarios', {
+      const response = await fetch('http://localhost:3000/usuarios/cadastrar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,15 +36,15 @@ const CadastroUsuario = () => {
           telefone,
           email,
           senha,
-          flag: {
+          role: {
             autor: isAutor,
             leitor: isLeitor,
           },
         }),
       });
- 
+
       const data = await response.json();
- 
+
       if (response.ok) {
         Alert.alert('Sucesso', 'Usuário cadastrado com sucesso!');
         setNome('');
@@ -64,15 +62,14 @@ const CadastroUsuario = () => {
       Alert.alert('Erro', 'Não foi possível cadastrar o usuário');
     }
   };
- 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Seja Bem-Vindo</Text>
         <Text style={styles.subtitle}>Estamos muito animados com sua presença</Text>
- 
+
         <Text style={styles.sectionTitle}>Informações da conta</Text>
- 
+
         <TextInput
           style={styles.input}
           placeholder="Nome"
@@ -114,7 +111,6 @@ const CadastroUsuario = () => {
           onChangeText={setSenha}
           secureTextEntry
         />
- 
         <Text style={styles.sectionTitle}>Escolha o campo abaixo</Text>
         <View style={styles.checkboxContainer}>
           <TouchableOpacity
@@ -124,7 +120,6 @@ const CadastroUsuario = () => {
             <View style={[styles.checkbox, isAutor && styles.checkedCheckbox]} />
             <Text style={styles.checkboxLabel}>Autor</Text>
           </TouchableOpacity>
- 
           <TouchableOpacity
             style={styles.checkboxItem}
             onPress={() => setIsLeitor(!isLeitor)}
@@ -133,7 +128,6 @@ const CadastroUsuario = () => {
             <Text style={styles.checkboxLabel}>Leitor</Text>
           </TouchableOpacity>
         </View>
- 
         <TouchableOpacity style={styles.button} onPress={handleCadastro}>
           <Text style={styles.buttonText}>Registrar</Text>
         </TouchableOpacity>
@@ -141,7 +135,6 @@ const CadastroUsuario = () => {
     </SafeAreaView>
   );
 };
- 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -217,5 +210,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
- 
+
 export default CadastroUsuario;
