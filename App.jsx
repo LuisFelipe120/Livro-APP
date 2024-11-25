@@ -147,7 +147,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f9f9f9',
-    padding: 10,
   },
   card: {
     backgroundColor: '#ffffff',
@@ -181,5 +180,66 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  bottomNav: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    height: 60,
+    borderTopWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#fff',
+  },
+  navIcon: {
+    fontSize: 25,
+    color: '#333',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    margin: 10,
+    height: 50,
+  },
+  searchInput: {
+    flex: 1,
+    padding: 10,
+    fontSize: 16,
+  },
+  searchIcon: {
+    fontSize: 18,
+    color: '#888',
+    marginLeft: 10,
+  },
+  categoryContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 15,
+    paddingHorizontal: 10,
+  },
+  categoryItem: {
+    alignItems: 'center',
+  },
+  categoryIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#d9d9d9',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  categoryText: {
+    marginTop: 5,
+    fontSize: 14,
+    color: '#333',
+  },
+  banner: {
+    width: '90%',
+    height: 120,
+    alignSelf: 'center',
+    borderRadius: 8,
+    marginVertical: 20,
   },
 });
