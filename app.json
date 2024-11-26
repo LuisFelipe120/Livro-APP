@@ -1,4 +1,6 @@
 {
   "name": "Projetointegrador_Livro",
-  "displayName": "Projetointegrador_Livro"
+  "displayName": "Projetointegrador_Livro",
+  "expo" : {
+    "plugins" : [ " expo-image-picker " ]  }
 }
