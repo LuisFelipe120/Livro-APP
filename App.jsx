@@ -5,56 +5,90 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 import { NavigationContainer, useNavigation, useRoute } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Buscar from './components/buscar';
-import ItemCarousel from './components/CarouselItem';
+import Carousel from './components/Carousel';
+import SplashScreen from './components/SplashScreen';
  
+function Vitrine()
+{
+  const navigation = useNavigation();
+
+  return(
+    <View>
+      <Text>Vitrine</Text>
+      <TouchableOpacity
+  style={styles.card}
+  onPress={() =>
+    navigation.navigate('Home', {
+      itemId: 86,
+      otherParam: 'anything you want here',
+    })
+  }
+></TouchableOpacity>
+    </View>
+  )
+}
+
+
 function HomeScreen() {
   const navigation = useNavigation();
   return (
-    <View style={{flex:1}}>
-    <View style={{height:70,}} >
-   <Buscar/>
-   </View>
+    <View style={{flex:1, padding:10}}>
     <View >
     <Text style={{padding:5, fontSize: 20, fontWeight:'bold'}}>Generos</Text>
-   <ItemCarousel/>
+   <Carousel/>
    </View>
-      {/* Card 1: Populares */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Populares</Text>
-        <Text style={styles.cardDescription}>
-          Descubra os livros mais populares entre os leitores.
-        </Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() =>
-            navigation.navigate('Details', {
-              itemId: 86,
-              otherParam: 'anything you want here',
-            })
-          }
-        >
-          <Text style={styles.buttonText}>Ver Detalhes</Text>
-        </TouchableOpacity>
-      </View>
+   {/* // Dentro do HomeScreen ou onde for aplicável */}
+<View style={styles.card}>
+  
+  <TouchableOpacity
+  style={styles.card}
+  onPress={() =>
+    navigation.navigate('Populares', {
+      itemId: 86,
+      otherParam: 'anything you want here',
+    })
+  }
+>
+  <Text style={styles.cardTitle}>Populares</Text>
+  <Text style={styles.cardDescription}>
+    Descubra os livros mais populares entre os leitores.
+  </Text>
+</TouchableOpacity>
+</View>
 
-      {/* Card 2: Mais lidas da semana */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Mais lidas da semana</Text>
-        <Text style={styles.cardDescription}>
-          Explore os livros mais lidos pelos usuários nesta semana.
-        </Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() =>
-            navigation.navigate('Details', {
-              itemId: 86,
-              otherParam: 'anything you want here',
-            })
-          }
-        >
-          <Text style={styles.buttonText}>Ver Detalhes</Text>
-        </TouchableOpacity>
-      </View>
+<View style={styles.card}>
+<TouchableOpacity
+  style={styles.card}
+  onPress={() =>
+    navigation.navigate('MaisLidos', {
+      itemId: 86,
+      otherParam: 'anything you want here',
+    })
+  }
+>
+  <Text style={styles.cardTitle}>Mais lidas da semana</Text>
+  <Text style={styles.cardDescription}>
+    Explore os livros mais lidos pelos usuários nesta semana.
+  </Text>
+</TouchableOpacity>
+</View>
+<View style={styles.card}>
+<TouchableOpacity
+  style={styles.card}
+  onPress={() =>
+    navigation.navigate('Enquetes', {
+      itemId: 86,
+      otherParam: 'anything you want here',
+    })
+  }
+>
+  <Text style={styles.cardTitle}>Veja as enquetes abertas</Text>
+  <Text style={styles.cardDescription}>
+    Navegue e se divirta com teorias sobre os capitulos lançados
+  </Text>
+</TouchableOpacity>
+</View>
+
    </View>
   );
 
@@ -62,24 +96,62 @@ function HomeScreen() {
  
 function LivrosScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1 }}>
+ <View style={{height:80}}>
+      <Buscar/>
+      </View>
       <Text>Livros!</Text>
     </View>
   );
 }
-function DetailsScreen() {
+function Populares() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings!</Text>
+    <View style={{ flex: 1 }}>
+ <View style={{height:80}}>
+      <Buscar/>
+      </View>      
+      <Text>populares</Text>
  </View>
   );
+  
+}
+function MaisLidos() {
+  return (
+    <View style={{ flex: 1 }}>
+            <View style={{height:80}}>
+      <Buscar/>
+      </View>
+      <Text>Mais Lidos da Semana</Text>
+ </View>
+  );
+  
+}
+function Enquetes() {
+  return (
+    <View style={{ flex: 1}}>
+        <View style={{height:80}}>
+      <Buscar/>
+      </View>
+      <Text>Enquetes</Text>
+ </View>
+  );
+  
+}
+function Splash() {
+  return (
+    <SplashScreen/>
+  );
+  
 }
  
 function ProfileScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1 }}>
+      <View style={{height:80}}>
+      <Buscar/>
+      </View>
       <Text>Perfil!</Text>
-      <IonIcons name='person-outline' size={40} color={'red'} />
+      
     </View>
   );
 }
@@ -89,20 +161,35 @@ const Tab = createBottomTabNavigator();
 
 function RootStack() {
   return (
-    <Stack.Navigator initialRouteName="Home" screenOptions={{
-      headerStyle: { backgroundColor: '#fbfbfa' },
-    }}>
-      <Stack.Screen name="Home" component={TabBar} options={{ headerTitle: () => (
-        <View style={{flex: 1, flexDirection:'row', justifyContent:"space-between", alignItems:'center'}}>
-          <View style={{paddingTop: 5}}>
-          <Text style={{ fontSize: 15, color:"#000"}}>Ola,</Text>
-          <Text style={{fontSize: 20, color:"#000"}}>Luis</Text>
-          </View>
-          <View>
-          </View>
+    <Stack.Navigator initialRouteName="Splash">
+      <Stack.Screen name='Splash' component={Splash} options={{ headerShown: false }} />
+      <Stack.Screen name='Vitrine' component={Vitrine} options={{ headerShown: false }} />
+
+    <Stack.Screen
+  name="Home"
+  component={TabBar}
+  options={{
+    headerTitle: () => (
+      <View style={{ flexDirection: 'row',justifyContent:'space-between', alignItems:'center', alignItems: 'center' }}>
+       
+        <View>
+          <Text style={{ fontSize: 14, color: '#000' }}>Olá,</Text>
+          <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#000' }}>Timóteo</Text>
         </View>
-        
-      )}} />
+        <Image
+          source={{ uri: 'https://i.pravatar.cc/100' }}
+          style={{ width: 40, height: 40, borderRadius: 20, marginRight: 10 }}
+        />
+      </View>
+    ),
+  }}
+/>
+
+    <Stack.Screen name="Populares" component={Populares}/>
+    <Stack.Screen name="MaisLidos" component={MaisLidos}/>
+    <Stack.Screen name="Enquetes" component={Enquetes}/>
+
+
 
       
     </Stack.Navigator>
@@ -144,10 +231,13 @@ export default function App() {
   );
 }
 const styles = StyleSheet.create({
+  // Estilo geral do container
   container: {
     flex: 1,
     backgroundColor: '#f9f9f9',
   },
+  
+  // Estilo do card
   card: {
     backgroundColor: '#ffffff',
     borderRadius: 8,
@@ -159,87 +249,20 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 5,
   },
+  
+  // Título do card
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
     color: '#333',
   },
+  
+  // Descrição do card
   cardDescription: {
     fontSize: 14,
     color: '#555',
     marginBottom: 15,
   },
-  button: {
-    backgroundColor: '#6200ee',
-    paddingVertical: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    height: 60,
-    borderTopWidth: 1,
-    borderColor: '#ddd',
-    backgroundColor: '#fff',
-  },
-  navIcon: {
-    fontSize: 25,
-    color: '#333',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    margin: 10,
-    height: 50,
-  },
-  searchInput: {
-    flex: 1,
-    padding: 10,
-    fontSize: 16,
-  },
-  searchIcon: {
-    fontSize: 18,
-    color: '#888',
-    marginLeft: 10,
-  },
-  categoryContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginVertical: 15,
-    paddingHorizontal: 10,
-  },
-  categoryItem: {
-    alignItems: 'center',
-  },
-  categoryIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#d9d9d9',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  categoryText: {
-    marginTop: 5,
-    fontSize: 14,
-    color: '#333',
-  },
-  banner: {
-    width: '90%',
-    height: 120,
-    alignSelf: 'center',
-    borderRadius: 8,
-    marginVertical: 20,
-  },
 });
+
