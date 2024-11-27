@@ -7,26 +7,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Buscar from './components/buscar';
 import Carousel from './components/Carousel';
 import SplashScreen from './components/SplashScreen';
+import PesquisaObra from './src/components/Vitrine';
+import Login from './src/components/Login';
+import CadastroUsuario from './src/components/Cadastrar';
+import AuthContext, { AuthProvider } from './src/components/auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
  
-function Vitrine()
-{
-  const navigation = useNavigation();
-
-  return(
-    <View>
-      <Text>Vitrine</Text>
-      <TouchableOpacity
-  style={styles.card}
-  onPress={() =>
-    navigation.navigate('Home', {
-      itemId: 86,
-      otherParam: 'anything you want here',
-    })
-  }
-></TouchableOpacity>
-    </View>
-  )
-}
 
 
 function HomeScreen() {
@@ -143,7 +129,24 @@ function Splash() {
   );
   
 }
- 
+function VitrineScreen() {
+  return (
+    <PesquisaObra/>
+  );
+  
+}
+function LoginScreen() {
+  return (
+    <Login/>
+  );
+  
+}
+function CadastroScreen() {
+  return (
+    <CadastroUsuario/>
+  );
+  
+}
 function ProfileScreen() {
   return (
     <View style={{ flex: 1 }}>
@@ -160,10 +163,14 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function RootStack() {
+  const { isAuthenticated } = React.useContext(AuthContext);
+  console.log('pilha raiz: ', isAuthenticated)
   return (
     <Stack.Navigator initialRouteName="Splash">
-      <Stack.Screen name='Splash' component={Splash} options={{ headerShown: false }} />
-      <Stack.Screen name='Vitrine' component={Vitrine} options={{ headerShown: false }} />
+            <Stack.Screen name='Splash' component={Splash} options={{ headerShown: false }} />
+
+         {isAuthenticated ?
+        (<>
 
     <Stack.Screen
   name="Home"
@@ -189,9 +196,16 @@ function RootStack() {
     <Stack.Screen name="MaisLidos" component={MaisLidos}/>
     <Stack.Screen name="Enquetes" component={Enquetes}/>
 
+    </>)
+    :
+    (<>
+      <Stack.Screen name="Vitrine" component={VitrineScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Cadastro" component={CadastroScreen} />
 
+      </>)
 
-      
+    }
     </Stack.Navigator>
   )};
 
@@ -225,9 +239,14 @@ function RootStack() {
  
 export default function App() {
   return (
+    <QueryClientProvider client={QueryClient}>
+          <AuthProvider>
+
     <NavigationContainer>
       <RootStack/>
     </NavigationContainer>
+    </AuthProvider>
+    </QueryClientProvider>
   );
 }
 const styles = StyleSheet.create({

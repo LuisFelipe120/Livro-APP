@@ -73,10 +73,10 @@ const PesquisaObra = () => {
       {/* Rodapé com botões */}
       <View style={styles.footer}>
         <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Registre sua história</Text>
+          <Text style={styles.footerButtonText}>Cadastre-se</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Seja um leitor</Text>
+          <Text style={styles.footerButtonText}>Login</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
