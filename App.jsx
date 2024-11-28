@@ -12,6 +12,7 @@ import Login from './src/components/Login';
 import CadastroUsuario from './src/components/Cadastrar';
 import AuthContext, { AuthProvider } from './src/components/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Splash from './components/SplashScreen';
  
 
 
@@ -123,12 +124,7 @@ function Enquetes() {
   );
   
 }
-function Splash() {
-  return (
-    <SplashScreen/>
-  );
-  
-}
+
 function VitrineScreen() {
   return (
     <PesquisaObra/>
@@ -163,11 +159,17 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function RootStack() {
-  const { isAuthenticated } = React.useContext(AuthContext);
+  const { isAuthenticated, isLoading } = React.useContext(AuthContext);
   console.log('pilha raiz: ', isAuthenticated)
+  if(isLoading) {
+    return(<View>
+     <Text>Splash</Text>
+    </View>)
+  }
   return (
-    <Stack.Navigator initialRouteName="Splash">
-            <Stack.Screen name='Splash' component={Splash} options={{ headerShown: false }} />
+    
+    <Stack.Navigator   initialRouteName={'Home'}>
+           
 
          {isAuthenticated ?
         (<>
@@ -238,8 +240,10 @@ function RootStack() {
   };
  
 export default function App() {
+  const queryClient = new QueryClient();
+
   return (
-    <QueryClientProvider client={QueryClient}>
+    <QueryClientProvider client={queryClient}>
           <AuthProvider>
 
     <NavigationContainer>

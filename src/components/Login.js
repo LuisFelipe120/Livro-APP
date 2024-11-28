@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Cadastrar from './Cadastrar';
 import {
   SafeAreaView,
   StyleSheet,
@@ -13,6 +12,7 @@ import {
 } from 'react-native';
 import { useMutation } from '@tanstack/react-query';
 import { login } from '../services/fetchs';
+import AuthContext from './auth';
 
 const Login = ({ navigation }) => {
   const { setIsAuthenticated } = React.useContext(AuthContext);
@@ -41,7 +41,7 @@ const Login = ({ navigation }) => {
    
  
   const [email, setEmail] = React.useState('');
-  const [senha, setPassword] = React.useState('');
+  const [senha, setSenha] = React.useState('');
  
  
   if(mutation.isPending || mutation.isError) {
@@ -69,7 +69,7 @@ const Login = ({ navigation }) => {
           style={styles.input}
           placeholder="Senha"
           value={senha}
-          onChangeText={setPassword}
+          onChangeText={setSenha}
           secureTextEntry
         />
 
