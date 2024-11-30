@@ -168,46 +168,46 @@ function RootStack() {
   }
   return (
     
-    <Stack.Navigator   initialRouteName={'Home'}>
+    <Stack.Navigator>
            
 
          {isAuthenticated ?
         (<>
 
-    <Stack.Screen
-  name="Home"
-  component={TabBar}
-  options={{
-    headerTitle: () => (
-      <View style={{ flexDirection: 'row',justifyContent:'space-between', alignItems:'center', alignItems: 'center' }}>
-       
-        <View>
-          <Text style={{ fontSize: 14, color: '#000' }}>Olá,</Text>
-          <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#000' }}>Timóteo</Text>
-        </View>
-        <Image
-          source={{ uri: 'https://i.pravatar.cc/100' }}
-          style={{ width: 40, height: 40, borderRadius: 20, marginRight: 10 }}
+            <Stack.Screen
+          name="Home"
+          component={TabBar}
+          options={{
+            headerTitle: () => (
+              <View style={{ flexDirection: 'row',justifyContent:'space-between', alignItems:'center', alignItems: 'center' }}>
+              
+                <View>
+                  <Text style={{ fontSize: 14, color: '#000' }}>Olá,</Text>
+                  <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#000' }}>Timóteo</Text>
+                </View>
+                <Image
+                  source={{ uri: 'https://i.pravatar.cc/100' }}
+                  style={{ width: 40, height: 40, borderRadius: 20, marginRight: 10 }}
+                />
+              </View>
+            ),
+          }}
         />
-      </View>
-    ),
-  }}
-/>
 
-    <Stack.Screen name="Populares" component={Populares}/>
-    <Stack.Screen name="MaisLidos" component={MaisLidos}/>
-    <Stack.Screen name="Enquetes" component={Enquetes}/>
+            <Stack.Screen name="Populares" component={Populares}/>
+            <Stack.Screen name="MaisLidos" component={MaisLidos}/>
+            <Stack.Screen name="Enquetes" component={Enquetes}/>
 
-    </>)
-    :
-    (<>
-      <Stack.Screen name="Vitrine" component={VitrineScreen} />
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Cadastro" component={CadastroScreen} />
+            </>)
+            :
+            (<>
+              <Stack.Screen name="Vitrine" component={VitrineScreen} />
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Cadastro" component={CadastroScreen} />
 
-      </>)
+              </>)
 
-    }
+            }
     </Stack.Navigator>
   )};
 

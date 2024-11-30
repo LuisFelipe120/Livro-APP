@@ -12,12 +12,15 @@ import {
 } from 'react-native';
 import { useMutation } from '@tanstack/react-query';
 import { login } from '../services/fetchs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthContext from './auth';
 
-const Login = ({ navigation }) => {
+const Login = () => {
+
   const { setIsAuthenticated } = React.useContext(AuthContext);
   const mutation = useMutation({
     mutationFn: ({ email, senha }) => {
+      
       // return fetch('http://localhost:3333/login', {
       //   method: 'POST',
       //   headers: {
@@ -28,6 +31,7 @@ const Login = ({ navigation }) => {
       return login({email, senha})
     },
     onSuccess: async (data) => {
+      console.log('Dados recebidos:', data)
       const user = data?.user; // posso guardar no context ou armazenamento local
       const token = data?.user?.token; // posso guardar no context ou armazenamento local
       if(user && token) {
@@ -35,6 +39,9 @@ const Login = ({ navigation }) => {
         await  AsyncStorage.setItem('localUser', JSON.stringify(user))
         await  AsyncStorage.setItem('localToken', token)
         setIsAuthenticated(true);
+      }
+      else {
+        console.error('Dados inválidos:', data);
       }
     }
   });
@@ -44,11 +51,11 @@ const Login = ({ navigation }) => {
   const [senha, setSenha] = React.useState('');
  
  
-  if(mutation.isPending || mutation.isError) {
-   return( <View>
-      <Text>Carregando....</Text>
-    </View>)
-  }
+  // if(mutation.isPending || mutation.isError) {
+  //  return( <View>
+  //     <Text>Carregando....</Text>
+  //   </View>)
+  // }
 
   return (
     <SafeAreaView style={styles.container}>
