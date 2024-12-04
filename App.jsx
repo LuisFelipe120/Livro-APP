@@ -5,7 +5,7 @@ import Login from './src/components/Login';
 import Vitrine from './src/components/Vitrine';
 import MaisLidos from './src/components/MaisLidos';
 import TelaBemVindo from './src/components/BemVindo';
-import Livros from './src/components/Livros';
+import Livros from './src/components/DetalhesCapitulos';
 
 
 
