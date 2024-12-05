@@ -1,25 +1,12 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, Text, Image, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 
-import userImage from '../assets/image/94703585_2682114138686908_5300330496163577856_n.jpg';
-
-const Stack = createStackNavigator();
 
 const Publicados = ({ navigation }) => {
-  const userName = "Timotio";
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.headerContainer}>
-        <Image source={userImage} style={styles.profileImage} />
-        <View style={styles.textContainer}>
-          <Text style={styles.greetingText}>Olá, {userName}</Text>
-          <Text style={styles.subText}>Autor</Text>
-        </View>
-      </View>
-
+     
       <View style={styles.searchContainer}>
         <TextInput style={styles.searchInput} placeholder="Pesquisar..." />
       </View>

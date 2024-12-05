@@ -6,13 +6,14 @@ import { NavigationContainer, useNavigation, useRoute } from '@react-navigation/
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Buscar from './components/buscar';
 import Carousel from './components/Carousel';
-import SplashScreen from './components/SplashScreen';
 import PesquisaObra from './src/components/Vitrine';
 import Login from './src/components/Login';
 import CadastroUsuario from './src/components/Cadastrar';
 import AuthContext, { AuthProvider } from './src/components/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Splash from './components/SplashScreen';
+import Publicados from './components/Publicados';
+import Pesquisa from './components/Pesquisa';
+import MaisLidas from './src/components/MaisLidos';
  
 
 
@@ -83,12 +84,7 @@ function HomeScreen() {
  
 function LivrosScreen() {
   return (
-    <View style={{ flex: 1 }}>
- <View style={{height:80}}>
-      <Buscar/>
-      </View>
-      <Text>Livros!</Text>
-    </View>
+   <Publicados/>
   );
 }
 function Populares() {
@@ -97,19 +93,14 @@ function Populares() {
  <View style={{height:80}}>
       <Buscar/>
       </View>      
-      <Text>populares</Text>
- </View>
+      </View>
   );
   
 }
 function MaisLidos() {
   return (
-    <View style={{ flex: 1 }}>
-            <View style={{height:80}}>
-      <Buscar/>
-      </View>
-      <Text>Mais Lidos da Semana</Text>
- </View>
+    
+    <MaisLidas/>
   );
   
 }
@@ -146,10 +137,7 @@ function CadastroScreen() {
 function ProfileScreen() {
   return (
     <View style={{ flex: 1 }}>
-      <View style={{height:80}}>
-      <Buscar/>
-      </View>
-      <Text>Perfil!</Text>
+ <Text>Perfil</Text>
       
     </View>
   );
