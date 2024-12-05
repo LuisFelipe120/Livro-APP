@@ -1,63 +1,76 @@
 import React, { useEffect, useState } from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  FlatList,
-  TouchableOpacity,
-  Modal,
-  TextInput,
-  Button,
-} from 'react-native';
+import { SafeAreaView, StyleSheet, View, Text, Image, FlatList, TouchableOpacity, Modal, TextInput, Button } from 'react-native';
+import { getLivro, getEpisodios } from '../services/fetchs';  // Importando as funções da pasta services
+import axios from 'axios';
 
-const DetalhesCapitulos = () => {
-  const [livro, setLivro] = useState(null); // Estado para as informações do livro
-  const [episodios, setEpisodios] = useState([]); // Estado para os capítulos
-  const [modalVisible, setModalVisible] = useState(false); // Controle do modal de avaliação
-  const [avaliacao, setAvaliacao] = useState(''); // Armazena a avaliação do usuário
+const Episodios = () => {
+  const [livro, setLivro] = useState(null);
+  const [episodios, setEpisodios] = useState([]);
+  const [erro, setErro] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false); // Controle do Modal
+  const [avaliacao, setAvaliacao] = useState(0); // Armazena a avaliação em estrelas
+  const [comentario, setComentario] = useState(''); // Armazena o comentário do usuário
 
-  // Busca dados do livro e dos episódios ao montar o componente
   useEffect(() => {
     const fetchDados = async () => {
       try {
-        // Substituir pelos endpoints reais da sua API
-        const livroResponse = await fetch('https://suaapi.com/livro/1');
-        const livroData = await livroResponse.json();
+        const livroData = await getLivro(1); // Puxa o livro com ID 1
         setLivro(livroData);
 
-        const episodiosResponse = await fetch('https://suaapi.com/livro/1/episodios');
-        const episodiosData = await episodiosResponse.json();
+        const episodiosData = await getEpisodios(1); // Puxa os episódios do livro 1
         setEpisodios(episodiosData);
       } catch (error) {
-        console.error('Erro ao buscar dados:', error);
+        setErro('Erro ao buscar dados.');
+        console.error(error);
       }
     };
 
     fetchDados();
   }, []);
 
-  // Envia a avaliação do usuário para a API
-  // const enviarAvaliacao = async () => {
-  //   try {
-  //     await fetch('https://suaapi.com/livro/1/avaliar', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ avaliacao: parseFloat(avaliacao) }),
-  //     });
-  //     setModalVisible(false);
-  //     setAvaliacao('');
-  //     alert('Avaliação enviada com sucesso!');
-  //   } catch (error) {
-  //     console.error('Erro ao enviar avaliação:', error);
-  //     alert('Erro ao enviar avaliação.');
-  //   }
-  // };
+  const handleAvaliar = async () => {
+    try {
+      // Enviar a avaliação para a API
+      const response = await axios.post(`http://192.168.x.x:3000/livro/${livro.id}/avaliar`, {
+        avaliacao,
+        comentario,
+      });
+      console.log('Avaliação enviada:', response.data);
+      alert('Avaliação enviada com sucesso!');
+      setModalVisible(false);
+      setAvaliacao(0);
+      setComentario('');
+    } catch (error) {
+      console.error('Erro ao enviar avaliação:', error);
+      alert('Erro ao enviar avaliação.');
+    }
+  };
 
-  // Renderização de cada episódio
+  const handleCancelar = () => {
+    // Função chamada ao cancelar
+    setModalVisible(false);
+    setAvaliacao(0);
+    setComentario('');
+  };
+
+  const renderEstrelas = () => {
+    const estrelas = [];
+    for (let i = 1; i <= 5; i++) {
+      estrelas.push(
+        <TouchableOpacity key={i} onPress={() => setAvaliacao(i)}>
+          <Text style={i <= avaliacao ? styles.estrelaSelecionada : styles.estrela}>
+            ★
+          </Text>
+        </TouchableOpacity>
+      );
+    }
+    return estrelas;
+  };
+
+  if (erro) {
+    return <Text>{erro}</Text>;
+  }
+
   const renderEpisodio = ({ item }) => (
     <View style={styles.card}>
       <View style={styles.cardContent}>
@@ -68,34 +81,23 @@ const DetalhesCapitulos = () => {
     </View>
   );
 
-  if (!livro) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text>Carregando...</Text>
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.container}>
-      {/* Cabeçalho */}
+      {/* Cabeçalho com informações do livro */}
       <View style={styles.header}>
-        <Image source={{ uri: livro.imagem }} style={styles.backgroundImage} />
+        <Image source={{uri: livro?.imagemCapa}} style={styles.backgroundImage} />
         <View style={styles.overlay} />
-
         <View style={styles.headerContent}>
-          <Text style={styles.categoria}>{livro.categoria}</Text>
-          <Text style={styles.tituloPrincipal}>{livro.titulo}</Text>
-          <Text style={styles.autor}>{livro.autor}</Text>
+          <Text style={styles.categoria}>{livro?.categoria}</Text>
+          <Text style={styles.tituloPrincipal}>{livro?.titulo}</Text>
+          <Text style={styles.autor}>{livro?.autor}</Text>
           <View style={styles.statsRow}>
-            <Text style={styles.stats}>{livro.visualizacoes} views</Text>
-            <Text style={styles.stats}>{livro.curtidas} likes</Text>
-            <Text style={styles.stats}>⭐ {livro.avaliacao}</Text>
-
-            {/* Botão "Rate" */}
+            <Text style={styles.stats}>{livro?.views} views</Text>
+            <Text style={styles.stats}>{livro?.likes} likes</Text>
+            <Text style={styles.stats}>⭐ {livro?.avaliacao}</Text>
             <TouchableOpacity
               style={styles.rateButton}
-              onPress={() => setModalVisible(true)}
+              onPress={() => setModalVisible(true)} // Abre o modal ao clicar
             >
               <Text style={styles.rateText}>Avaliação</Text>
             </TouchableOpacity>
@@ -111,27 +113,27 @@ const DetalhesCapitulos = () => {
         contentContainerStyle={styles.lista}
       />
 
-      {/* Modal para avaliação */}
+      {/* Modal de Avaliação */}
       <Modal
         visible={modalVisible}
         transparent={true}
         animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
+        onRequestClose={handleCancelar}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Avalie o livro</Text>
+            <View style={styles.estrelasContainer}>{renderEstrelas()}</View>
             <TextInput
               style={styles.input}
-              placeholder="Digite sua avaliação (0-10)"
-              keyboardType="numeric"
-              value={avaliacao}
-              onChangeText={setAvaliacao}
+              placeholder="Deixe um comentário (opcional)"
+              value={comentario}
+              onChangeText={setComentario}
             />
-            <Button title="Enviar Avaliação" onPress={enviarAvaliacao} />
-            <TouchableOpacity onPress={() => setModalVisible(false)}>
-              <Text style={styles.modalClose}>Cancelar</Text>
-            </TouchableOpacity>
+            <View style={styles.modalButtons}>
+              <Button title="Cancelar" onPress={handleCancelar} />
+              <Button title="Enviar Avaliação" onPress={handleAvaliar} />
+            </View>
           </View>
         </View>
       </Modal>
@@ -180,6 +182,7 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: 'row',
+    marginBottom: 16,
     alignItems: 'center',
   },
   stats: {
@@ -189,14 +192,15 @@ const styles = StyleSheet.create({
   },
   rateButton: {
     backgroundColor: '#FFF',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
     borderRadius: 8,
+    marginLeft: 8,
   },
   rateText: {
     color: '#6200EE',
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 12,
   },
   lista: {
     padding: 16,
@@ -207,6 +211,28 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  },
+  cardContent: {
+    justifyContent: 'center',
+  },
+  episodioTitulo: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 4,
+  },
+  episodioData: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 4,
+  },
+  episodioCurtidas: {
+    fontSize: 14,
+    color: '#FFA41B',
   },
   modalContainer: {
     flex: 1,
@@ -226,6 +252,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
   },
+  estrelasContainer: {
+    flexDirection: 'row',
+    marginBottom: 16,
+  },
+  estrela: {
+    fontSize: 30,
+    color: '#DDD',
+    margin: 5,
+  },
+  estrelaSelecionada: {
+    fontSize: 30,
+    color: '#FFD700', // Cor de estrela selecionada
+    margin: 5,
+  },
   input: {
     width: '100%',
     borderWidth: 1,
@@ -234,11 +274,11 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 16,
   },
-  modalClose: {
-    marginTop: 10,
-    color: '#6200EE',
-    fontWeight: 'bold',
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
   },
 });
 
-export default DetalhesCapitulos;
+export default Episodios;
