@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Publicados from './components/Publicados';
 import Pesquisa from './components/Pesquisa';
 import MaisLidas from './src/components/MaisLidos';
+import CadastroLivros from './src/components/CadastroLivro';
  
 
 
@@ -104,6 +105,12 @@ function MaisLidos() {
   );
   
 }
+function CadastroLivro() {
+  return (
+    <CadastroLivros/>
+  );
+  
+}
 function Enquetes() {
   return (
     <View style={{ flex: 1}}>
@@ -185,6 +192,9 @@ function RootStack() {
             <Stack.Screen name="Populares" component={Populares}/>
             <Stack.Screen name="MaisLidos" component={MaisLidos}/>
             <Stack.Screen name="Enquetes" component={Enquetes}/>
+          <Stack.Screen name="LivroCadastro" component={CadastroLivro}    options={{
+          presentation: 'modal'
+        }} />
 
             </>)
             :

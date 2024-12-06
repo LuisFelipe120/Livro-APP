@@ -9,3 +9,8 @@ export const login = async (body) => {
       throw error; // Certifique-se de lançar o erro para que a mutação possa capturá-lo
     }
   };
+
+  export const getLivros = async () => {
+    const { data } = await api.get('/livros')
+    return data;
+}
