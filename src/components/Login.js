@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Cadastrar from './Cadastrar';
 import {
   SafeAreaView,
   StyleSheet,
@@ -9,40 +8,54 @@ import {
   View,
   Alert,
   ScrollView,
+  Button,
 } from 'react-native';
+import { useMutation } from '@tanstack/react-query';
+import { login } from '../services/fetchs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AuthContext from './auth';
 
-const Login = ({ navigation }) => {
-  const [emailOuTelefone, setEmailOuTelefone] = useState('');
-  const [senha, setSenha] = useState('');
+const Login = () => {
 
-  const handleLogin = async () => {
-    // Lógica de login
-    if (!emailOuTelefone || !senha) {
-      Alert.alert('Erro', 'Preencha todos os campos.');
-      return;
-    }
-    try {
-      // Chamada para a API de login
-      const response = await fetch('http://localhost:3000/usuarios/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ emailOuTelefone, senha }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        Alert.alert('Sucesso', 'Login realizado com sucesso!');
-        // Navegação para outra tela ou ações pós-login
-      } else {
-        Alert.alert('Erro', data.error || 'Erro ao fazer login');
+  const { setIsAuthenticated } = React.useContext(AuthContext);
+  const mutation = useMutation({
+    mutationFn: ({ email, senha }) => {
+      
+      // return fetch('http://localhost:3333/login', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({ email, senha }),
+      // });
+      return login({email, senha})
+    },
+    onSuccess: async (data) => {
+      console.log('Dados recebidos:', data)
+      const user = data?.user; // posso guardar no context ou armazenamento local
+      const token = data?.user?.token; // posso guardar no context ou armazenamento local
+      if(user && token) {
+        //controlar context authenticacao
+        await  AsyncStorage.setItem('localUser', JSON.stringify(user))
+        await  AsyncStorage.setItem('localToken', token)
+        setIsAuthenticated(true);
       }
-    } catch (error) {
-      Alert.alert('Erro', 'Não foi possível fazer o login');
+      else {
+        console.error('Dados inválidos:', data);
+      }
     }
-  };
+  });
+   
+ 
+  const [email, setEmail] = React.useState('');
+  const [senha, setSenha] = React.useState('');
+ 
+ 
+  // if(mutation.isPending || mutation.isError) {
+  //  return( <View>
+  //     <Text>Carregando....</Text>
+  //   </View>)
+  // }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -54,9 +67,9 @@ const Login = ({ navigation }) => {
 
         <TextInput
           style={styles.input}
-          placeholder="E-mail ou número de telefone"
-          value={emailOuTelefone}
-          onChangeText={setEmailOuTelefone}
+          placeholder="E-mail"
+          value={email}
+          onChangeText={setEmail}
           keyboardType="email-address"
         />
         <TextInput
@@ -74,9 +87,9 @@ const Login = ({ navigation }) => {
           <Text style={styles.link}>Utilizar um gerenciador de senhas?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Entrar</Text>
-        </TouchableOpacity>
+        <Button style={styles.button} onPress={() => {
+              mutation.mutate({ email, senha })
+            }} title='Sign in'/>
 
         <TouchableOpacity onPress={() => navigation.navigate('Cadastrar')}>
           <Text style={styles.signUpText}>Se não tiver uma conta cadastre-se</Text>

@@ -8,8 +8,9 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
+import Buscar from '../../components/buscar';
 
-const MaisLidas = ({ navigation }) => {
+const MaisLidas = () => {
   // Dados fictícios para exibir os livros
   const livros = [
     {
@@ -64,13 +65,7 @@ const MaisLidas = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.saudacao}>Olá, Timóteo</Text>
-        <Image
-          style={styles.avatar}
-          source={{
-            uri: 'https://via.placeholder.com/50', // Avatar de exemplo
-          }}
-        />
+        <Buscar/>
       </View>
       <Text style={styles.tituloSecao}>Mais lidas da semana</Text>
       <FlatList

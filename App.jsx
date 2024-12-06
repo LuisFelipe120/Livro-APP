@@ -6,27 +6,16 @@ import { NavigationContainer, useNavigation, useRoute } from '@react-navigation/
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Buscar from './components/buscar';
 import Carousel from './components/Carousel';
-import SplashScreen from './components/SplashScreen';
+import PesquisaObra from './src/components/Vitrine';
+import Login from './src/components/Login';
+import CadastroUsuario from './src/components/Cadastrar';
+import AuthContext, { AuthProvider } from './src/components/auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Publicados from './components/Publicados';
+import Pesquisa from './components/Pesquisa';
+import MaisLidas from './src/components/MaisLidos';
+import CadastroLivros from './src/components/CadastroLivro';
  
-function Vitrine()
-{
-  const navigation = useNavigation();
-
-  return(
-    <View>
-      <Text>Vitrine</Text>
-      <TouchableOpacity
-  style={styles.card}
-  onPress={() =>
-    navigation.navigate('Home', {
-      itemId: 86,
-      otherParam: 'anything you want here',
-    })
-  }
-></TouchableOpacity>
-    </View>
-  )
-}
 
 
 function HomeScreen() {
@@ -96,12 +85,7 @@ function HomeScreen() {
  
 function LivrosScreen() {
   return (
-    <View style={{ flex: 1 }}>
- <View style={{height:80}}>
-      <Buscar/>
-      </View>
-      <Text>Livros!</Text>
-    </View>
+   <Publicados/>
   );
 }
 function Populares() {
@@ -110,19 +94,20 @@ function Populares() {
  <View style={{height:80}}>
       <Buscar/>
       </View>      
-      <Text>populares</Text>
- </View>
+      </View>
   );
   
 }
 function MaisLidos() {
   return (
-    <View style={{ flex: 1 }}>
-            <View style={{height:80}}>
-      <Buscar/>
-      </View>
-      <Text>Mais Lidos da Semana</Text>
- </View>
+    
+    <MaisLidas/>
+  );
+  
+}
+function CadastroLivro() {
+  return (
+    <CadastroLivros/>
   );
   
 }
@@ -137,20 +122,29 @@ function Enquetes() {
   );
   
 }
-function Splash() {
+
+function VitrineScreen() {
   return (
-    <SplashScreen/>
+    <PesquisaObra/>
   );
   
 }
- 
+function LoginScreen() {
+  return (
+    <Login/>
+  );
+  
+}
+function CadastroScreen() {
+  return (
+    <CadastroUsuario/>
+  );
+  
+}
 function ProfileScreen() {
   return (
     <View style={{ flex: 1 }}>
-      <View style={{height:80}}>
-      <Buscar/>
-      </View>
-      <Text>Perfil!</Text>
+ <Text>Perfil</Text>
       
     </View>
   );
@@ -160,38 +154,58 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function RootStack() {
+  const { isAuthenticated, isLoading } = React.useContext(AuthContext);
+  console.log('pilha raiz: ', isAuthenticated)
+  if(isLoading) {
+    return(<View>
+     <Text>Splash</Text>
+    </View>)
+  }
   return (
-    <Stack.Navigator initialRouteName="Splash">
-      <Stack.Screen name='Splash' component={Splash} options={{ headerShown: false }} />
-      <Stack.Screen name='Vitrine' component={Vitrine} options={{ headerShown: false }} />
+    
+    <Stack.Navigator>
+           
 
-    <Stack.Screen
-  name="Home"
-  component={TabBar}
-  options={{
-    headerTitle: () => (
-      <View style={{ flexDirection: 'row',justifyContent:'space-between', alignItems:'center', alignItems: 'center' }}>
-       
-        <View>
-          <Text style={{ fontSize: 14, color: '#000' }}>Olá,</Text>
-          <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#000' }}>Timóteo</Text>
-        </View>
-        <Image
-          source={{ uri: 'https://i.pravatar.cc/100' }}
-          style={{ width: 40, height: 40, borderRadius: 20, marginRight: 10 }}
+         {isAuthenticated ?
+        (<>
+
+            <Stack.Screen
+          name="Home"
+          component={TabBar}
+          options={{
+            headerTitle: () => (
+              <View style={{ flexDirection: 'row',justifyContent:'space-between', alignItems:'center', alignItems: 'center' }}>
+              
+                <View>
+                  <Text style={{ fontSize: 14, color: '#000' }}>Olá,</Text>
+                  <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#000' }}>Timóteo</Text>
+                </View>
+                <Image
+                  source={{ uri: 'https://i.pravatar.cc/100' }}
+                  style={{ width: 40, height: 40, borderRadius: 20, marginRight: 10 }}
+                />
+              </View>
+            ),
+          }}
         />
-      </View>
-    ),
-  }}
-/>
 
-    <Stack.Screen name="Populares" component={Populares}/>
-    <Stack.Screen name="MaisLidos" component={MaisLidos}/>
-    <Stack.Screen name="Enquetes" component={Enquetes}/>
+            <Stack.Screen name="Populares" component={Populares}/>
+            <Stack.Screen name="MaisLidos" component={MaisLidos}/>
+            <Stack.Screen name="Enquetes" component={Enquetes}/>
+          <Stack.Screen name="LivroCadastro" component={CadastroLivro}    options={{
+          presentation: 'modal'
+        }} />
 
+            </>)
+            :
+            (<>
+              <Stack.Screen name="Vitrine" component={VitrineScreen} />
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Cadastro" component={CadastroScreen} />
 
+              </>)
 
-      
+            }
     </Stack.Navigator>
   )};
 
@@ -224,10 +238,17 @@ function RootStack() {
   };
  
 export default function App() {
+  const queryClient = new QueryClient();
+
   return (
+    <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+
     <NavigationContainer>
       <RootStack/>
     </NavigationContainer>
+    </AuthProvider>
+    </QueryClientProvider>
   );
 }
 const styles = StyleSheet.create({

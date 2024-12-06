@@ -1,15 +1,18 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
-const Livro = ({ navigate, params }) => (
+const Livro = () => {
+  const {data: isLivro, error, isLoading} = useQuery({queryKey: ['getLivros'],
+    queryFn: getUsers});
+  console.log('Home: ',isLivro)
+  return(
   <View style={styles.container}>
     <Text style={styles.text}>Página do Livro</Text>
-    <Text style={styles.subtext}>Livro ID: {params?.bookId || "Desconhecido"}</Text>
-    <TouchableOpacity onPress={() => navigate("Home")}>
-      <Text style={styles.link}>Voltar para Home</Text>
-    </TouchableOpacity>
+    <Text style={styles.subtext}>Livro ID: </Text>
+
   </View>
-);
+  )
+};
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", alignItems: "center" },
