@@ -1,9 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { getLivros } from "../src/services/fetchs";
 
 const Livro = () => {
   const {data: isLivro, error, isLoading} = useQuery({queryKey: ['getLivros'],
-    queryFn: getUsers});
+    queryFn: getLivros});
   console.log('Home: ',isLivro)
   return(
   <View style={styles.container}>
