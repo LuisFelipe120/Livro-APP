@@ -1,8 +1,10 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { SafeAreaView, View, Text, Image, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 
 
-const Publicados = ({ navigation }) => {
+const Publicados = () => {
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -23,7 +25,7 @@ const Publicados = ({ navigation }) => {
       <View style={styles.addBoxContainer}>
         <TouchableOpacity 
           style={styles.addBox} 
-          onPress={() => navigation.navigate('Publicados')}
+          onPress={() => navigation.navigate('CadastroLivro')}
         >
           <Text style={styles.addIcon}>+</Text>
         </TouchableOpacity>
