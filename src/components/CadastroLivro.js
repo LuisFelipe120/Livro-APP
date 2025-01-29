@@ -253,23 +253,26 @@ import RNPickerSelect from "react-native-picker-select";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthContext from './auth';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { livros } from '../services/fetchs';
+import { createlivros } from '../services/fetchs';
 
 const CadastroLivros = () => {
   const [nome, setNome] = useState('');
   const [sinopse, setSinopse] = useState('');
   const [tags, setTags] = useState('');
   const [generos_id, setGeneros_id] = useState(null);
+  const [avaliacao_geral, setAvaliacao_Geral] = useState(null);
+
   const { setIsAuthenticated } = React.useContext(AuthContext);
   const [imageUser, setImageUser] = useState(null);
 
   const mutation = useMutation({
-    mutationFn: ({ generos_id, nome, imagem, sinopse, tags }) => {
+    mutationFn: ({ generos_id, nome, imagem, sinopse, tags, avaliacao_geral }) => {
       const formData = new FormData();
-    formData.append('generos_id', generos_id);
+    formData.append('generos_id', Number(generos_id));
     formData.append('nome', nome);
     formData.append('sinopse', sinopse);
     formData.append('tags', tags);
+    formData.append('avaliacao_geral', avaliacao_geral);
 
     // Verificando se a imagem foi selecionada
     if (imagem) {
@@ -277,12 +280,12 @@ const CadastroLivros = () => {
 
       formData.append('imagem', {
         uri: imagem,
-        type: 'image/jpeg', // Ajuste conforme o tipo da imagem
+        type: 'image/jpg', // Ajuste conforme o tipo da imagem
         name: 'imagem.jpg', // Ajuste conforme o nome desejado
       });
 
     }
-      return livros(formData);
+      return createlivros(formData);
     },
     onSuccess: async (data) => {
       console.log('Dados recebidos:', data);
@@ -333,7 +336,7 @@ const CadastroLivros = () => {
     const result = await launchCamera(options);
     if (result?.assets && result.assets.length > 0) {
       const imageUri = result.assets[0].uri
-      console.log("Imagem da Galeria:", imageUri); // Verifique a URI
+      console.log("Imagem da Camera:", imageUri); // Verifique a URI
       setImageUser(imageUri); // Atualize o estado com a URI
     }
   };
@@ -364,6 +367,12 @@ const CadastroLivros = () => {
           value={tags}
           onChangeText={setTags}
         />
+        <TextInput
+          style={styles.input}
+          placeholder="Avaliacao Geral"
+          value={avaliacao_geral}
+          onChangeText={setAvaliacao_Geral}
+        />
 
         <Text style={styles.sectionTitle}>Escolha o campo abaixo</Text>
         <View style={styles.checkboxContainer}>
@@ -391,7 +400,7 @@ const CadastroLivros = () => {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            mutation.mutate({ generos_id, nome, imagem: imageUser, sinopse, tags });
+            mutation.mutate({ generos_id, nome, imagem: imageUser, sinopse, tags, avaliacao_geral });
           }}
         >
           <Text style={styles.buttonText}>Cadastrar</Text>
