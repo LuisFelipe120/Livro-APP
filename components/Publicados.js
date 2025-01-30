@@ -25,7 +25,7 @@ const Publicados = () => {
       <View style={styles.addBoxContainer}>
         <TouchableOpacity 
           style={styles.addBox} 
-          onPress={() => navigation.navigate('LivroCadastro')}
+          onPress={() => navigation.navigate('CadastroLivro')}
         >
           <Text style={styles.addIcon}>+</Text>
         </TouchableOpacity>

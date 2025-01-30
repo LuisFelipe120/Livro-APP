@@ -3,9 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { getLivros } from "../src/services/fetchs";
 
 const Livro = () => {
-  const {data: isLivro, error, isLoading} = useQuery({queryKey: ['getLivros'],
+  const {data: islivro, error, isLoading} = useQuery({queryKey: ['getlivros'],
     queryFn: getLivros});
-  console.log('Home: ',isLivro)
+  console.log('Home: ',islivro)
   return(
   <View style={styles.container}>
     <Text style={styles.text}>Página do Livro</Text>

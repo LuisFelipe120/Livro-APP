@@ -82,7 +82,11 @@ function HomeScreen() {
   );
 
 }
- 
+function CadastroLivrosScreen() {
+  return (
+   <CadastroLivros/>
+  );
+}
 function LivrosScreen() {
   return (
    <Publicados/>
@@ -168,7 +172,6 @@ function RootStack() {
 
          {isAuthenticated ?
         (<>
-
             <Stack.Screen
           name="Home"
           component={TabBar}
@@ -192,9 +195,7 @@ function RootStack() {
             <Stack.Screen name="Populares" component={Populares}/>
             <Stack.Screen name="MaisLidos" component={MaisLidos}/>
             <Stack.Screen name="Enquetes" component={Enquetes}/>
-          <Stack.Screen name="LivroCadastro" component={CadastroLivro}    options={{
-          presentation: 'modal'
-        }} />
+            <Stack.Screen name="CadastroLivro" component={CadastroLivrosScreen} options={{ presentation: 'modal' }}/>
 
             </>)
             :
