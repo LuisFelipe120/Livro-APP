@@ -76,7 +76,7 @@ const PesquisaObra = () => {
       {/* Rodapé com botões */}
       <View style={styles.footer}>
         <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Cadastre-se</Text>
+          <Text style={styles.footerButtonText} onPress={() => navigation.navigate('CadastroUsuario')}>Cadastre-se</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton}  onPress={() => navigation.navigate('Login')}>
           <Text style={styles.footerButtonText}>Login</Text>

@@ -31,3 +31,12 @@ export const createlivros = async (formData) => {
     throw error; // Certifique-se de lançar o erro para que a mutação possa capturá-lo
   }
 };
+export const cadastrar = async (formData) => {
+  try {
+    const { data } = await api.post('/usuarios', formData);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error; // Certifique-se de lançar o erro para que a mutação possa capturá-lo
+  }
+};

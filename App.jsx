@@ -131,7 +131,7 @@ function LoginScreen() {
   return (
     <Login/>
   );
-  
+    
 }
 function CadastroScreen() {
   return (
@@ -196,7 +196,7 @@ function RootStack() {
             (<>
               <Stack.Screen name="Vitrine" component={VitrineScreen} />
               <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Cadastro" component={CadastroScreen} />
+              <Stack.Screen name="CadastroUsuario" component={CadastroScreen} />
 
               </>)
 
