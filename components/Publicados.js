@@ -1,11 +1,15 @@
 import { useNavigation } from '@react-navigation/native';
+import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { SafeAreaView, View, Text, Image, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { getLivros } from '../src/services/fetchs';
 
 
 const Publicados = () => {
   const navigation = useNavigation();
-
+const {data: islivro, error, isLoading} = useQuery({queryKey: ['getlivros'],
+    queryFn: getLivros});
+  console.log('Home: ',islivro)
   return (
     <SafeAreaView style={{ flex: 1 }}>
      

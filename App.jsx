@@ -15,6 +15,7 @@ import Publicados from './components/Publicados';
 import Pesquisa from './components/Pesquisa';
 import MaisLidas from './src/components/MaisLidos';
 import CadastroLivros from './src/components/CadastroLivro';
+import ObrasLidasCapitulo from './components/ObrasLidasCapitulos';
  
 
 
@@ -90,6 +91,11 @@ function CadastroLivrosScreen() {
 function LivrosScreen() {
   return (
    <Publicados/>
+  );
+}
+function ObrasLidasCapituloScreen() {
+  return (
+   <ObrasLidasCapitulo/>
   );
 }
 function Populares() {
@@ -189,6 +195,8 @@ function RootStack() {
             <Stack.Screen name="Populares" component={Populares}/>
             <Stack.Screen name="MaisLidos" component={MaisLidos}/>
             <Stack.Screen name="Enquetes" component={Enquetes}/>
+            <Stack.Screen name="ObrasLidasCapitulo" component={ObrasLidasCapituloScreen}/>
+
             <Stack.Screen name="CadastroLivro" component={CadastroLivrosScreen} options={{ presentation: 'modal' }}/>
 
             </>)
