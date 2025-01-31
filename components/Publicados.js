@@ -9,9 +9,9 @@ const Publicados = () => {
   const { data: livros, error, isLoading } = useQuery({ queryKey: ['getLivros'], queryFn: getLivros });
 
   if (isLoading) {
-    return <Text style={styles.loadingText}>Carregando...</Text>;
+    return <Text style={styles.loadingText}>Carregando...</Text>
   }
-  const baseURL = 'http://10.57.45.29:3333/public/images'; // Substitua pelo endereço correto do seu backend
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.searchContainer}>
@@ -25,18 +25,10 @@ const Publicados = () => {
         contentContainerStyle={styles.listContainer}
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.bookItem} onPress={() => console.log(item.nome)}>
-            <Text style={styles.bookTitle}>{item.generos_id}</Text>
-            <Image 
-            source={{ uri: `${baseURL}/${item.imagem}` }}
-            style={styles.bookImage}
-            onError={(e) => console.log('Erro:', e.nativeEvent.error)}
-          />
-            <Text style={styles.bookTitle}>{item.sinopse}</Text>
-            <Text style={styles.bookTitle}>{item.tags}</Text>
-
+            <Text style={styles.bookTitle}>{item.nome}</Text>
           </TouchableOpacity>
         )}
-      />  
+      />
 
       <View style={styles.addBoxContainer}>
         <TouchableOpacity style={styles.addBox} onPress={() => navigation.navigate('CadastroLivro')}>
@@ -66,9 +58,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  bookTitle: { fontSize: 16, fontWeight: 'bold', textAlign: 'center', color: '#333' },
   bookImage: { width: 80, height: 100, marginBottom: 8, borderRadius: 5 },
-
+  bookTitle: { fontSize: 16, fontWeight: 'bold', textAlign: 'center', color: '#333' },
   addBoxContainer: { alignItems: 'center', marginVertical: 20 },
   addBox: { width: 80, height: 80, backgroundColor: '#e0e0e0', borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
   addIcon: { fontSize: 32, color: '#333' },
