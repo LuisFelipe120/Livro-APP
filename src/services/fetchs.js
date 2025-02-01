@@ -13,6 +13,11 @@ export const login = async (body) => {
     const { data } = await api.get('/livros/meuslivros')
     return data;
 }
+export const getGeneros = async () => {
+  const { data } = await api.get('/generos')
+  return data;
+}
+
 
 export const createlivros = async (formData) => {
   try {
