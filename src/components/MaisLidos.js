@@ -26,12 +26,12 @@ useEffect(() => {
     console.log("Dados de Capitulos:", capitulos);
     console.log("Dados de Livros:", livros);
 
-    // Mapeando os capítulos lidos e associando o nome do livro
     const leituraComLivroAtualizado = leitura.map((capituloLido) => {
-      // Verificando se o capituloLido tem capitulo_id
+      // Log para ver os dados de capituloLido
       console.log("Capítulo lido:", capituloLido);
 
-      const capitulo = capitulos.find((cap) => cap.id === Number(capituloLido.capitulo_id)); // Certificando-se de que ambos são números
+      // Verificando o nome correto do campo para a busca
+      const capitulo = capitulos.find((cap) => cap.id === capituloLido.capitulo_id);
       console.log("Capítulo correspondente encontrado:", capitulo);
 
       if (capitulo) {
@@ -45,9 +45,9 @@ useEffect(() => {
       return { ...capituloLido, livroNome: 'Livro não encontrado' };
     });
 
-    setLivrosLidos(leituraComLivroAtualizado); // Atualiza o estado com os dados completos
+    setLivrosLidos(leituraComLivroAtualizado);
   }
-}, [leitura, capitulos, livros]);
+}, [leitura, capitulos, livros]); 
 
   return (
     <SafeAreaView style={styles.container}>
