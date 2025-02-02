@@ -56,15 +56,19 @@ const CadastroUsuario = () => {
     },
     onSuccess: async (data) => {
       console.log('Dados recebidos:', data);
-      const user = data?.user; 
-      const token = data?.user?.token; 
-      if (user && token) {
-        await AsyncStorage.setItem('localUser', JSON.stringify(user));
-        await AsyncStorage.setItem('localToken', token);
-        setIsAuthenticated(true);
-      } else {
-        console.error('Dados inválidos:', data);
+
+      // Verifica se a resposta contém os dados esperados
+      if (!data || !data.user) {
+        console.error('Erro: Resposta inesperada da API', data);
+        Alert.alert('Erro', 'Erro no cadastro. Tente novamente.');
+        return;
       }
+    
+      // Atualiza estado de autenticação
+      setIsAuthenticated(true);
+    
+      // Mensagem de sucesso para o usuário
+      Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
     }
   });
 

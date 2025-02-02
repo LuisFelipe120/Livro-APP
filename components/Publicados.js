@@ -10,7 +10,9 @@ const cardWidth = width / 2 - 20;
 const Publicados = () => {
   const navigation = useNavigation();
   const { data: livros, error, isLoading } = useQuery({ queryKey: ['getLivros'], queryFn: getLivros });
-  const IMAGE_BASE_URL = 'http://10.57.45.29:3333/images/';
+  // const IMAGE_BASE_URL = 'http://10.57.45.29:3333/images/';
+   const IMAGE_BASE_URL = 'http://192.168.1.101:3333/images/';
+
   const { data: generos, isLoading: loadingGeneros } = useQuery({
     queryKey: ["getGeneros"],
     queryFn: getGeneros // Função que busca os gêneros da API

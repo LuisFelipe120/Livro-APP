@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -9,58 +9,45 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Buscar from '../../components/buscar';
+import { getCapitulos, getLidos, getLivros } from '../services/fetchs';
+import { useQuery } from '@tanstack/react-query';
 
 const MaisLidas = () => {
   // Dados fictícios para exibir os livros
-  const livros = [
-    {
-      id: '1',
-      titulo: 'True Potential',
-      imagem: 'https://via.placeholder.com/150',
-      avaliacao: 4,
-    },
-    {
-      id: '2',
-      titulo: 'The Mind of a Leader',
-      imagem: 'https://via.placeholder.com/150',
-      avaliacao: 5,
-    },
-    {
-      id: '3',
-      titulo: 'Unlock Your Potential',
-      imagem: 'https://via.placeholder.com/150',
-      avaliacao: 3,
-    },
-    {
-        id: '4',
-        titulo: 'True Potential',
-        imagem: 'https://via.placeholder.com/150',
-        avaliacao: 4,
-      },
-      {
-        id: '5',
-        titulo: 'The Mind of a Leader',
-        imagem: 'https://via.placeholder.com/150',
-        avaliacao: 5,
-      },
-      {
-        id: '6',
-        titulo: 'Unlock Your Potential',
-        imagem: 'https://via.placeholder.com/150',
-        avaliacao: 3,
-      },
-  ];
+  const { data: leitura, error, isLoading } = useQuery({ queryKey: ['getLidos'], queryFn: getLidos });
+  const { data: capitulos, isLoading: loadingCapitulos } = useQuery({ queryKey: ['getCapitulos'], queryFn: getCapitulos });
+  const { data: livros, isLoading: loadingLivros } = useQuery({ queryKey: ['getLivros'], queryFn: getLivros });
 
-  // Renderização dos livros
-  const renderLivro = ({ item }) => (
-    <TouchableOpacity style={styles.card}>
-      <Image source={{ uri: item.imagem }} style={styles.capa} />
-      <View style={styles.info}>
-        <Text style={styles.titulo}>{item.titulo}</Text>
-        <Text style={styles.avaliacao}>{'⭐'.repeat(item.avaliacao)}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+const [livrosLidos, setLivrosLidos] = useState([]);
+
+useEffect(() => {
+  if (leitura && capitulos && livros) {
+    console.log("Dados de Leitura:", leitura);
+    console.log("Dados de Capitulos:", capitulos);
+    console.log("Dados de Livros:", livros);
+
+    // Mapeando os capítulos lidos e associando o nome do livro
+    const leituraComLivroAtualizado = leitura.map((capituloLido) => {
+      // Verificando se o capituloLido tem capitulo_id
+      console.log("Capítulo lido:", capituloLido);
+
+      const capitulo = capitulos.find((cap) => cap.id === Number(capituloLido.capitulo_id)); // Certificando-se de que ambos são números
+      console.log("Capítulo correspondente encontrado:", capitulo);
+
+      if (capitulo) {
+        const livro = livros.find((livro) => livro.id === capitulo.livros_id);
+        console.log("Livro correspondente encontrado:", livro);
+
+        const livroNome = livro ? livro.nome : 'Livro não encontrado';
+        return { ...capituloLido, livroNome };
+      }
+
+      return { ...capituloLido, livroNome: 'Livro não encontrado' };
+    });
+
+    setLivrosLidos(leituraComLivroAtualizado); // Atualiza o estado com os dados completos
+  }
+}, [leitura, capitulos, livros]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -69,22 +56,29 @@ const MaisLidas = () => {
       </View>
       <Text style={styles.tituloSecao}>Mais lidas da semana</Text>
       <FlatList
-        data={livros}
-        keyExtractor={(item) => item.id}
-        renderItem={renderLivro}
+        data={livrosLidos}
+        keyExtractor={(item) => item.id.toString()}
         numColumns={2}
         columnWrapperStyle={styles.row}
-        contentContainerStyle={styles.lista}
+        renderItem={({ item }) => ( 
+          <TouchableOpacity>
+         <Text style={styles.titulo}>{item.livroNome}</Text>
+         </TouchableOpacity>
+   )}
       />
     </SafeAreaView>
   );
 };
-
+  
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
     padding: 16,
+  },
+  row: {
+    justifyContent: 'space-between',
+    marginBottom: 10,
   },
   header: {
     flexDirection: 'row',

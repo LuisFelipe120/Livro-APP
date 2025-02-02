@@ -17,6 +17,15 @@ export const getGeneros = async () => {
   const { data } = await api.get('/generos')
   return data;
 }
+export const getLidos = async () => {
+  const { data } = await api.get('/leiturasLidos')
+  return data;
+}
+export const getCapitulos = async () => {
+  const { data } = await api.get('/capitulos')
+  return data;
+}
+
 
 
 export const createlivros = async (formData) => {
