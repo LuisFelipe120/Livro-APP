@@ -18,36 +18,38 @@ const MaisLidas = () => {
   const { data: capitulos, isLoading: loadingCapitulos } = useQuery({ queryKey: ['getCapitulos'], queryFn: getCapitulos });
   const { data: livros, isLoading: loadingLivros } = useQuery({ queryKey: ['getLivros'], queryFn: getLivros });
 
-const [livrosLidos, setLivrosLidos] = useState([]);
+const [livrosLidos, setLivrosComGeneros] = useState([]);
 
 useEffect(() => {
-  if (leitura && capitulos && livros) {
-    console.log("Dados de Leitura:", leitura);
-    console.log("Dados de Capitulos:", capitulos);
-    console.log("Dados de Livros:", livros);
-
-    const leituraComLivroAtualizado = leitura.map((capituloLido) => {
-      // Log para ver os dados de capituloLido
-      console.log("Capítulo lido:", capituloLido);
-
-      // Verificando o nome correto do campo para a busca
-      const capitulo = capitulos.find((cap) => cap.id === capituloLido.capitulo_id);
-      console.log("Capítulo correspondente encontrado:", capitulo);
-
-      if (capitulo) {
-        const livro = livros.find((livro) => livro.id === capitulo.livros_id);
-        console.log("Livro correspondente encontrado:", livro);
-
-        const livroNome = livro ? livro.nome : 'Livro não encontrado';
-        return { ...capituloLido, livroNome };
+  if (leitura && capitulos) {
+    const livrosComCapituloAtualizados = leitura.map((leituraItem) => {
+      // Verifica se o capítulos_id existe
+      if (!leituraItem.capitulos_id) {
+        console.warn('Item sem capítulos_id:', leituraItem);
+        return { ...leituraItem, livroNome: 'ID não definido' };
       }
-
-      return { ...capituloLido, livroNome: 'Livro não encontrado' };
+      
+      return {
+        ...leituraItem,
+        livroNome: findCapitulo(leituraItem.capitulos_id)
+      };
     });
-
-    setLivrosLidos(leituraComLivroAtualizado);
+    
+    setLivrosComGeneros(livrosComCapituloAtualizados);
   }
-}, [leitura, capitulos, livros]); 
+}, [leitura, capitulos]);
+const findCapitulo = (capitulosId) => {
+  if (!capitulos || capitulosId === undefined || capitulosId === null) {
+    return 'Capítulo não especificado';
+  }
+
+  // Converte ambos para Number para garantir comparação correta
+  const id = Number(capitulosId);
+  const capitulo = capitulos.find((g) => Number(g.id) === id);
+
+  return capitulo?.nome || 'Capítulo não encontrado';
+};
+
 
   return (
     <SafeAreaView style={styles.container}>
