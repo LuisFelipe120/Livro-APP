@@ -12,12 +12,10 @@ import {
   Image,
 } from 'react-native';
 import RNPickerSelect from "react-native-picker-select";
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthContext from './auth';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { cadastrar } from '../services/fetchs';
-
 const CadastroUsuario = () => {
   const [nome, setNome] = useState('');
   const [cpf, setCpf] = useState('');
@@ -50,7 +48,6 @@ const CadastroUsuario = () => {
         type: 'image/jpg', // Ajuste conforme o tipo da imagem
         name: 'imagem.jpg', // Ajuste conforme o nome desejado
       });
-
     }
       return cadastrar(formData);
     },
@@ -86,7 +83,6 @@ const CadastroUsuario = () => {
       },
     ]);
   };
-
   const pickImageFromGalery = async () => {
     const options = {
       mediaType: 'photo',
@@ -112,6 +108,19 @@ const CadastroUsuario = () => {
     }
   };
 
+ 
+  const pickImageFromCamera = async () => {
+    const options = {
+      mediaType: 'photo',
+    };
+    const result = await launchCamera(options);
+    if (result?.assets && result.assets.length > 0) {
+      const imageUri = result.assets[0].uri
+      console.log("Imagem da Camera:", imageUri); // Verifique a URI
+      setAvatar(imageUri); // Atualize o estado com a URI
+    }
+  };
+ 
  
   return (
     <SafeAreaView style={styles.container}>
@@ -273,7 +282,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
 const pickerSelectStyles = StyleSheet.create({
   inputAndroid: {
     fontSize: 16,

@@ -1,4 +1,3 @@
-
 import { useMutation } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { Alert, Button, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -8,17 +7,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthContext from './auth';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { createlivros } from '../services/fetchs';
-
 const CadastroLivros = () => {
   const [nome, setNome] = useState('');
   const [sinopse, setSinopse] = useState('');
   const [tags, setTags] = useState('');
   const [generos_id, setGeneros_id] = useState(null);
   const [avaliacao_geral, setAvaliacao_Geral] = useState(null);
-
   const { setIsAuthenticated } = React.useContext(AuthContext);
   const [imageUser, setImageUser] = useState(null);
-
+ 
   const mutation = useMutation({
     mutationFn: ({ generos_id, nome, imagem, sinopse, tags, avaliacao_geral }) => {
       const formData = new FormData();
@@ -27,24 +24,23 @@ const CadastroLivros = () => {
     formData.append('sinopse', sinopse);
     formData.append('tags', tags);
     formData.append('avaliacao_geral', avaliacao_geral);
-
     // Verificando se a imagem foi selecionada
     if (imagem) {
       console.log('aqui imagem',imagem);  // Loga o caminho da imagem para verificação
-
+ 
       formData.append('imagem', {
         uri: imagem,
         type: 'image/jpg', // Ajuste conforme o tipo da imagem
         name: 'imagem.jpg', // Ajuste conforme o nome desejado
       });
-
+ 
     }
       return createlivros(formData);
     },
     onSuccess: async (data) => {
       console.log('Dados recebidos:', data);
-      const user = data?.user; 
-      const token = data?.user?.token; 
+      const user = data?.user;
+      const token = data?.user?.token;
       if (user && token) {
         await AsyncStorage.setItem('localUser', JSON.stringify(user));
         await AsyncStorage.setItem('localToken', token);
@@ -54,7 +50,7 @@ const CadastroLivros = () => {
       }
     }
   });
-
+ 
   const handleImageUser = () => {
     Alert.alert("Selecione", "Informe de onde você quer pegar a foto", [
       {
@@ -69,7 +65,7 @@ const CadastroLivros = () => {
       },
     ]);
   };
-
+ 
   const pickImageFromGalery = async () => {
     const options = {
       mediaType: 'photo',
@@ -82,7 +78,7 @@ const CadastroLivros = () => {
       setImageUser(imageUri); // Atualize o estado com a URI
     }
   };
-
+ 
   const pickImageFromCamera = async () => {
     const options = {
       mediaType: 'photo',
@@ -94,15 +90,15 @@ const CadastroLivros = () => {
       setImageUser(imageUri); // Atualize o estado com a URI
     }
   };
-
+ 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Publique seu livro</Text>
         <Text style={styles.subtitle}>Comece sua jornada e explore sua imaginação ou conhecimento</Text>
-
+ 
         <Text style={styles.sectionTitle}>O que precisamos:</Text>
-
+ 
         <TextInput
           style={styles.input}
           placeholder="Nome do Livro"
@@ -127,7 +123,6 @@ const CadastroLivros = () => {
           value={avaliacao_geral}
           onChangeText={setAvaliacao_Geral}
         />
-
         <Text style={styles.sectionTitle}>Escolha o campo abaixo</Text>
         <View style={styles.checkboxContainer}>
           <Text style={styles.label}>Por favor selecione o gênero</Text>
@@ -141,7 +136,7 @@ const CadastroLivros = () => {
             style={pickerSelectStyles}
           />
         </View>
-
+ 
         <View>
           <TouchableOpacity style={styles.button} onPress={handleImageUser}>
             <Text style={styles.buttonText}>Selecionar Imagem</Text>
@@ -150,7 +145,7 @@ const CadastroLivros = () => {
             <Image source={{ uri: imageUser }} style={styles.image} />
           )}
         </View>
-
+ 
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
@@ -163,7 +158,7 @@ const CadastroLivros = () => {
     </SafeAreaView>
   );
 };
-
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -230,7 +225,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#EEE',
   },
 });
-
+ 
 const pickerSelectStyles = StyleSheet.create({
   inputAndroid: {
     fontSize: 16,
@@ -243,5 +238,5 @@ const pickerSelectStyles = StyleSheet.create({
     paddingRight: 30, // to ensure the text is never behind the icon
   },
 });
-
+ 
 export default CadastroLivros;
