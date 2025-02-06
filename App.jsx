@@ -115,6 +115,12 @@ function MaisLidos() {
   );
   
 }
+function CadastroLivro() {
+  return (
+    <CadastroLivros/>
+  );
+  
+}
 function Enquetes() {
   return (
     <View style={{ flex: 1}}>
@@ -195,9 +201,9 @@ function RootStack() {
             {/* <Stack.Screen name="Populares" component={Populares}/> */}
             <Stack.Screen name="MaisLidos" component={MaisLidos}/>
             <Stack.Screen name="Enquetes" component={Enquetes}/>
-            <Stack.Screen name="ObrasLidasCapitulo" component={ObrasLidasCapituloScreen}/>
-
-            <Stack.Screen name="CadastroLivro" component={CadastroLivrosScreen} options={{ presentation: 'modal' }}/>
+          <Stack.Screen name="LivroCadastro" component={CadastroLivro}    options={{
+          presentation: 'modal'
+        }} />
 
             </>)
             :
