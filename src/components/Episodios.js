@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, View, Text, Image, FlatList, TouchableOpacity, Modal, TextInput, Button } from 'react-native';
 
 const Episodios = () => {
-  const [modalVisible, setModalVisible] = useState(false); // Controle do Modal
+  const [modalVisible, setModalVisible] = useState(false); // Controle do Modal de Avaliação
+  const [modalCapituloVisible, setModalCapituloVisible] = useState(false); // Controle do Modal de Criação de Capítulo
   const [avaliacao, setAvaliacao] = useState(0); // Armazena a avaliação em estrelas
   const [comentario, setComentario] = useState(''); // Armazena o comentário do usuário
   const [abaAtiva, setAbaAtiva] = useState('episodios'); // Controla qual aba está ativa
   const [avaliacoes, setAvaliacoes] = useState([]); // Armazena as avaliações enviadas
+  const [novoCapitulo, setNovoCapitulo] = useState({ titulo: '' }); // Armazena o título do novo capítulo
 
   const livro = {
     imagemCapa: 'https://via.placeholder.com/150',
@@ -18,11 +20,11 @@ const Episodios = () => {
     avaliacao: 4.5,
   };
 
-  const episodios = [
+  const [episodios, setEpisodios] = useState([
     { id: '1', titulo: 'Episódio 1: O Começo', data: '01/01/2023', curtidas: 120 },
     { id: '2', titulo: 'Episódio 2: A Jornada', data: '08/01/2023', curtidas: 150 },
     { id: '3', titulo: 'Episódio 3: O Desafio', data: '15/01/2023', curtidas: 200 },
-  ];
+  ]);
 
   const handleCancelar = () => {
     // Função chamada ao cancelar
@@ -43,6 +45,20 @@ const Episodios = () => {
     setModalVisible(false);
     setAvaliacao(0);
     setComentario('');
+  };
+
+  const handleCriarCapitulo = () => {
+    // Adiciona o novo capítulo à lista de episódios
+    const dataAtual = new Date().toLocaleDateString(); // Pega a data atual
+    const novoCapituloCompleto = {
+      id: String(episodios.length + 1),
+      titulo: novoCapitulo.titulo,
+      data: dataAtual, // Define a data atual
+      curtidas: 0, // Inicia com 0 curtidas
+    };
+    setEpisodios([...episodios, novoCapituloCompleto]);
+    setModalCapituloVisible(false);
+    setNovoCapitulo({ titulo: '' }); // Limpa o campo de título
   };
 
   const renderEstrelas = (quantidade) => {
@@ -93,7 +109,7 @@ const Episodios = () => {
             <Text style={styles.stats}>⭐ {livro.avaliacao}</Text>
             <TouchableOpacity
               style={styles.rateButton}
-              onPress={() => setModalVisible(true)} // Abre o modal ao clicar
+              onPress={() => setModalVisible(true)} // Abre o modal de avaliação ao clicar
             >
               <Text style={styles.rateText}>Avaliação</Text>
             </TouchableOpacity>
@@ -101,26 +117,41 @@ const Episodios = () => {
         </View>
       </View>
 
-      {/* Botões para alternar entre Episódios e Recomendações */}
-      <View style={styles.botoesAba}>
-        <TouchableOpacity
-          style={[styles.botaoAba, abaAtiva === 'episodios' && styles.botaoAbaAtivo]}
-          onPress={() => setAbaAtiva('episodios')}
-        >
-          <Text style={styles.textoBotaoAba}>Episódios</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.botaoAba, abaAtiva === 'capitulos' && styles.botaoAbaAtivo]}
-          onPress={() => setAbaAtiva('capitulos')}
-        >
-          <Text style={styles.textoBotaoAba}>Novo Capitulo</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.botaoAba, abaAtiva === 'recomendacoes' && styles.botaoAbaAtivo]}
-          onPress={() => setAbaAtiva('recomendacoes')}
-        >
-          <Text style={styles.textoBotaoAba}>Recomendações</Text>
-        </TouchableOpacity>
+      {/* Botões para alternar entre Episódios, Criar Capítulo e Recomendações */}
+      <View style={styles.botoesAbaContainer}>
+        <View style={styles.botoesAba}>
+          <TouchableOpacity
+            style={styles.botaoAba}
+            onPress={() => setAbaAtiva('episodios')}
+          >
+            <Text style={[styles.textoBotaoAba, abaAtiva === 'episodios' && styles.textoBotaoAbaAtivo]}>
+              Episódios
+            </Text>
+            {abaAtiva === 'episodios' && <View style={styles.tracoAtivo} />}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.botaoAba}
+            onPress={() => setModalCapituloVisible(true)}
+          >
+            <Text style={[styles.textoBotaoAba, abaAtiva === 'criarCapitulo' && styles.textoBotaoAbaAtivo]}>
+              Criar Capítulo
+            </Text>
+            {abaAtiva === 'criarCapitulo' && <View style={styles.tracoAtivo} />}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.botaoAba}
+            onPress={() => setAbaAtiva('recomendacoes')}
+          >
+            <Text style={[styles.textoBotaoAba, abaAtiva === 'recomendacoes' && styles.textoBotaoAbaAtivo]}>
+              Recomendações
+            </Text>
+            {abaAtiva === 'recomendacoes' && <View style={styles.tracoAtivo} />}
+          </TouchableOpacity>
+        </View>
+        {/* Linha divisória cinza clara */}
+        <View style={styles.linhaDivisoria} />
       </View>
 
       {/* Exibe a lista de episódios ou recomendações com base na aba ativa */}
@@ -169,6 +200,30 @@ const Episodios = () => {
             <View style={styles.modalButtons}>
               <Button title="Cancelar" onPress={handleCancelar} />
               <Button title="Enviar Avaliação" onPress={handleAvaliar} />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de Criação de Capítulo */}
+      <Modal
+        visible={modalCapituloVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setModalCapituloVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Criar Capítulo</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Título do Capítulo"
+              value={novoCapitulo.titulo}
+              onChangeText={(text) => setNovoCapitulo({ titulo: text })}
+            />
+            <View style={styles.modalButtons}>
+              <Button title="Cancelar" onPress={() => setModalCapituloVisible(false)} />
+              <Button title="Salvar Capítulo" onPress={handleCriarCapitulo} />
             </View>
           </View>
         </View>
@@ -238,22 +293,33 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 12,
   },
+  botoesAbaContainer: {
+    marginVertical: 16,
+  },
   botoesAba: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginVertical: 16,
   },
   botaoAba: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-  },
-  botaoAbaAtivo: {
-    backgroundColor: '#6200EE',
+    alignItems: 'center',
   },
   textoBotaoAba: {
     fontSize: 16,
+    color: '#999',
+  },
+  textoBotaoAbaAtivo: {
     color: '#000',
+  },
+  tracoAtivo: {
+    height: 2,
+    width: '100%',
+    backgroundColor: '#000',
+    marginTop: 4,
+  },
+  linhaDivisoria: {
+    height: 1,
+    backgroundColor: '#EEE',
+    marginTop: 8,
   },
   lista: {
     padding: 16,
@@ -302,13 +368,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   estrela: {
-    fontSize: 30, // Tamanho original das estrelas
+    fontSize: 30,
     color: '#DDD',
     margin: 5,
   },
   estrelaSelecionada: {
-    fontSize: 30, // Tamanho original das estrelas
-    color: '#FFD700', // Cor de estrela selecionada
+    fontSize: 30,
+    color: '#FFD700',
     margin: 5,
   },
   modalContainer: {
@@ -336,7 +402,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     marginBottom: 16,
-    minHeight: 100,
+    minHeight: 50,
   },
   modalButtons: {
     flexDirection: 'row',
