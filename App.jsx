@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Button, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {  Image, StyleSheet, Text,  TouchableOpacity, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import { NavigationContainer, useNavigation, useRoute } from '@react-navigation/native';
+import { NavigationContainer, useNavigation,  } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Buscar from './components/buscar';
 import Carousel from './components/Carousel';
@@ -12,14 +12,17 @@ import CadastroUsuario from './src/components/Cadastrar';
 import AuthContext, { AuthProvider } from './src/components/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Publicados from './components/Publicados';
-import Pesquisa from './components/Pesquisa';
 import MaisLidas from './src/components/MaisLidos';
 import CadastroLivros from './src/components/CadastroLivro';
+<<<<<<< HEAD
 import ObrasLidasCapitulo from './components/ObrasLidasCapitulos';
+=======
+import Episodios from './src/components/Episodios';
+>>>>>>> ba92430857373682a011876d2b3e2f16a87b98a0
  
-
-
-function HomeScreen() {
+ 
+ 
+export function HomeScreen() {
   const navigation = useNavigation();
   return (
     <View style={{flex:1, padding:10}}>
@@ -28,8 +31,13 @@ function HomeScreen() {
    <Carousel/>
    </View>
    {/* // Dentro do HomeScreen ou onde for aplicável */}
+<<<<<<< HEAD
 {/* <View style={styles.card}>
   
+=======
+<View style={styles.card}>
+ 
+>>>>>>> ba92430857373682a011876d2b3e2f16a87b98a0
   <TouchableOpacity
   style={styles.card}
   onPress={() =>
@@ -44,8 +52,13 @@ function HomeScreen() {
     Descubra os livros mais populares entre os leitores.
   </Text>
 </TouchableOpacity>
+<<<<<<< HEAD
 </View> */}
 
+=======
+</View>
+ 
+>>>>>>> ba92430857373682a011876d2b3e2f16a87b98a0
 <View style={styles.card}>
 <TouchableOpacity
   style={styles.card}
@@ -78,10 +91,10 @@ function HomeScreen() {
   </Text>
 </TouchableOpacity>
 </View>
-
+ 
    </View>
   );
-
+ 
 }
 function CadastroLivrosScreen() {
   return (
@@ -97,6 +110,10 @@ function ObrasLidasCapituloScreen() {
   return (
    <ObrasLidasCapitulo/>
   );
+<<<<<<< HEAD
+=======
+ 
+>>>>>>> ba92430857373682a011876d2b3e2f16a87b98a0
 }
 // function Populares() {
 //   return (
@@ -110,10 +127,16 @@ function ObrasLidasCapituloScreen() {
 // }
 function MaisLidos() {
   return (
-    
+   
     <MaisLidas/>
   );
-  
+ 
+}
+function CadastroLivro() {
+  return (
+    <CadastroLivros/>
+  );
+ 
 }
 function CadastroLivro() {
   return (
@@ -130,39 +153,43 @@ function Enquetes() {
       <Text>Enquetes</Text>
  </View>
   );
-  
+ 
 }
-
+ 
 function VitrineScreen() {
   return (
     <PesquisaObra/>
   );
-  
+ 
 }
 function LoginScreen() {
   return (
     <Login/>
   );
+<<<<<<< HEAD
     
+=======
+ 
+>>>>>>> ba92430857373682a011876d2b3e2f16a87b98a0
 }
 function CadastroScreen() {
   return (
     <CadastroUsuario/>
   );
-  
+ 
 }
 function ProfileScreen() {
   return (
     <View style={{ flex: 1 }}>
- <Text>Perfil</Text>
-      
+      <Text>Perfil</Text>
+      <Episodios/>
     </View>
   );
 }
 const Stack = createNativeStackNavigator();
-
+ 
 const Tab = createBottomTabNavigator();
-
+ 
 function RootStack() {
   const { isAuthenticated, isLoading } = React.useContext(AuthContext);
   console.log('pilha raiz: ', isAuthenticated)
@@ -172,10 +199,10 @@ function RootStack() {
     </View>)
   }
   return (
-    
+   
     <Stack.Navigator>
            
-
+ 
          {isAuthenticated ?
         (<>
             <Stack.Screen
@@ -184,7 +211,7 @@ function RootStack() {
           options={{
             headerTitle: () => (
               <View style={{ flexDirection: 'row',justifyContent:'space-between', alignItems:'center', alignItems: 'center' }}>
-              
+             
                 <View>
                   <Text style={{ fontSize: 14, color: '#000' }}>Olá,</Text>
                   <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#000' }}>Timóteo</Text>
@@ -197,32 +224,49 @@ function RootStack() {
             ),
           }}
         />
+<<<<<<< HEAD
 
             {/* <Stack.Screen name="Populares" component={Populares}/> */}
+=======
+ 
+            <Stack.Screen name="Populares" component={Populares}/>
+>>>>>>> ba92430857373682a011876d2b3e2f16a87b98a0
             <Stack.Screen name="MaisLidos" component={MaisLidos}/>
             <Stack.Screen name="Enquetes" component={Enquetes}/>
+<<<<<<< HEAD
           <Stack.Screen name="LivroCadastro" component={CadastroLivro}    options={{
           presentation: 'modal'
         }} />
 
+=======
+            <Stack.Screen name="ObrasLidasCapitulo" component={ObrasLidasCapituloScreen}/>
+
+            <Stack.Screen name="CadastroLivro" component={CadastroLivrosScreen} options={{ presentation: 'modal' }}/>
+            <Stack.Screen name="Episodios" component={Episodios} />
+>>>>>>> atualizacao
             </>)
             :
             (<>
               <Stack.Screen name="Vitrine" component={VitrineScreen} />
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="CadastroUsuario" component={CadastroScreen} />
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> ba92430857373682a011876d2b3e2f16a87b98a0
               </>)
-
+ 
             }
     </Stack.Navigator>
   )};
-
-
+ 
+ 
   const TabBar = () => {
     return (  
       <Tab.Navigator
         screenOptions={({ route }) => ({
+ 
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
             if (route.name === 'Home') {
@@ -248,11 +292,11 @@ function RootStack() {
  
 export default function App() {
   const queryClient = new QueryClient();
-
+ 
   return (
     <QueryClientProvider client={queryClient}>
           <AuthProvider>
-
+ 
     <NavigationContainer>
       <RootStack/>
     </NavigationContainer>
@@ -266,7 +310,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f9f9f9',
   },
-  
+ 
   // Estilo do card
   card: {
     backgroundColor: '#ffffff',
@@ -279,7 +323,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 5,
   },
-  
+ 
   // Título do card
   cardTitle: {
     fontSize: 18,
@@ -287,7 +331,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: '#333',
   },
-  
+ 
   // Descrição do card
   cardDescription: {
     fontSize: 14,
@@ -295,4 +339,3 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
 });
-
