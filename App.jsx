@@ -28,7 +28,7 @@ function HomeScreen() {
    <Carousel/>
    </View>
    {/* // Dentro do HomeScreen ou onde for aplicável */}
-<View style={styles.card}>
+{/* <View style={styles.card}>
   
   <TouchableOpacity
   style={styles.card}
@@ -44,7 +44,7 @@ function HomeScreen() {
     Descubra os livros mais populares entre os leitores.
   </Text>
 </TouchableOpacity>
-</View>
+</View> */}
 
 <View style={styles.card}>
 <TouchableOpacity
@@ -98,16 +98,16 @@ function ObrasLidasCapituloScreen() {
    <ObrasLidasCapitulo/>
   );
 }
-function Populares() {
-  return (
-    <View style={{ flex: 1 }}>
- <View style={{height:80}}>
-      <Buscar/>
-      </View>      
-      </View>
-  );
+// function Populares() {
+//   return (
+//     <View style={{ flex: 1 }}>
+//  <View style={{height:80}}>
+//       <Buscar/>
+//       </View>      
+//       </View>
+//   );
   
-}
+// }
 function MaisLidos() {
   return (
     
@@ -192,7 +192,7 @@ function RootStack() {
           }}
         />
 
-            <Stack.Screen name="Populares" component={Populares}/>
+            {/* <Stack.Screen name="Populares" component={Populares}/> */}
             <Stack.Screen name="MaisLidos" component={MaisLidos}/>
             <Stack.Screen name="Enquetes" component={Enquetes}/>
             <Stack.Screen name="ObrasLidasCapitulo" component={ObrasLidasCapituloScreen}/>
