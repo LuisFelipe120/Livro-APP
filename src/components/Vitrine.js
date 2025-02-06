@@ -8,27 +8,41 @@ import {
   View,
   FlatList,
   Image,
+  Animated,
 } from 'react-native';
 import bibli from './../img/images.png';
 import { useNavigation } from '@react-navigation/native';
 
 const PesquisaObra = () => {
   const navigation = useNavigation();
-
   const [pesquisa, setPesquisa] = useState('');
-  
-  // Exemplo de dados fictícios para os livros
-  const [obras, setObras] = useState([
+  const [footerVisible, setFooterVisible] = useState(true);
+  const footerHeight = new Animated.Value(footerVisible ? 70 : 30); // Define altura de 70px quando maximizado
+  const footerPosition = new Animated.Value(50); // Posição inicial da seta
+
+  const toggleFooter = () => {
+    Animated.timing(footerHeight, {
+      toValue: footerVisible ? 30 : 70, // Alterna entre 30px e 70px
+      duration: 300,
+      useNativeDriver: false,
+    }).start(() => setFooterVisible(!footerVisible));
+
+    Animated.timing(footerPosition, {
+      toValue: footerVisible ? 10 : 50, // Move a seta para cima ou para baixo
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const [obras] = useState([
     { id: '1', nome: 'Avatar', autor: 'Desconhecido', imagem: 'https://via.placeholder.com/100' },
     { id: '2', nome: 'Minecraft', autor: 'Desconhecido', imagem: 'https://via.placeholder.com/100' },
     { id: '3', nome: 'Homem Aranha', autor: 'Desconhecido', imagem: 'https://via.placeholder.com/100' },
     { id: '4', nome: 'Vingadores', autor: 'Desconhecido', imagem: 'https://via.placeholder.com/100' },
     { id: '5', nome: 'Venom', autor: 'Desconhecido', imagem: 'https://via.placeholder.com/100' },
     { id: '6', nome: 'Devil Hunter', autor: 'Desconhecido', imagem: 'https://via.placeholder.com/100' },
-    // Adicione mais livros conforme necessário
   ]);
 
-  // Filtra as obras com base no termo de pesquisa
   const obrasFiltradas = obras.filter((obra) =>
     obra.nome.toLowerCase().includes(pesquisa.toLowerCase())
   );
@@ -43,45 +57,65 @@ const PesquisaObra = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Imagem no topo */}
       <View style={styles.imageContainer}>
-        <Image
-          source={bibli}
-          style={styles.topImage}
-        />
+        <Image source={bibli} style={styles.topImage} />
       </View>
 
-      {/* Barra de Pesquisa */}
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
           placeholder="Pesquise uma obra"
           value={pesquisa}
-          onChangeText={(text) => setPesquisa(text)} // Atualiza o estado da pesquisa
+          onChangeText={setPesquisa}
         />
         <TouchableOpacity style={styles.searchButton}>
           <Text style={styles.searchButtonText}>🔍</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Grid de Livros Filtrados */}
       <FlatList
-        data={obrasFiltradas} // Exibe apenas as obras filtradas
+        data={obrasFiltradas}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         numColumns={3}
         contentContainerStyle={styles.grid}
       />
 
-      {/* Rodapé com botões */}
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Cadastre-se</Text>
+      {/* Seta lateral para minimizar */}
+      <Animated.View
+        style={[styles.toggleFooterButton, { bottom: footerPosition }]}
+      >
+        <TouchableOpacity
+          style={styles.toggleFooterButtonInner}
+          onPress={toggleFooter}
+        >
+          <Text style={styles.toggleFooterButtonText}>
+            {footerVisible ? '▼' : '▲'}
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton}  onPress={() => navigation.navigate('Login')}>
-          <Text style={styles.footerButtonText}>Login</Text>
-        </TouchableOpacity>
-      </View>
+      </Animated.View>
+
+      <Animated.View style={[styles.footer, { height: footerHeight }]}>
+        {/* Rodapé maximizado: área branca com os botões */}
+        {footerVisible && (
+          <View style={styles.footerContent}>
+            <TouchableOpacity 
+              style={styles.footerButton}
+              onPress={() => navigation.navigate('CadastroUsuario')}
+            >
+              <Text style={styles.footerButtonText}>Cadastre-se</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.footerButton}
+              onPress={() => navigation.navigate('Login')}
+            >
+              <Text style={styles.footerButtonText}>Login</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        {/* Quando minimizado, só aparece a área azul */}
+        {!footerVisible && <View style={styles.footerBlueArea} />}
+      </Animated.View>
     </SafeAreaView>
   );
 };
@@ -93,13 +127,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 16,
   },
-  
-  // Estilos para a imagem no topo
+
   imageContainer: {
     alignItems: 'center',
     marginBottom: 16,
   },
-  
+
   topImage: {
     width: '100%',
     height: 150,
@@ -116,74 +149,107 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#DDD',
   },
-  
+
   searchInput: {
     flex: 1,
     fontSize: 16,
     paddingVertical: 10,
     color: '#333',
   },
-  
+
   searchButton: {
     paddingHorizontal: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  
+
   searchButtonText: {
     fontSize: 18,
     color: '#333',
   },
 
-   grid:{
-     justifyContent:'space-between',
-     paddingBottom :20 
-   },
+  grid: {
+    justifyContent: 'space-between',
+    paddingBottom: 20,
+  },
 
-   card:{
-     alignItems:'center',
-     marginBottom :20, // Espaçamento vertical entre os cards
-     marginHorizontal :10 // Espaçamento horizontal entre os cards
-   },
+  card: {
+    alignItems: 'center',
+    marginBottom: 20,
+    marginHorizontal: 10,
+  },
 
-   cardImage:{
-     width :100 ,
-     height :150 ,
-     borderRadius :8 ,
-     backgroundColor:'#DDD'
-   },
+  cardImage: {
+    width: 100,
+    height: 150,
+    borderRadius: 8,
+    backgroundColor: '#DDD',
+  },
 
-   cardTitle:{
-     fontSize :14 ,
-     fontWeight :'bold' ,
-     textAlign:'center',
-     marginTop :8 
-   },
+  cardTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 8,
+  },
 
-   cardAuthor:{
-     fontSize :12 ,
-     color :'#666' ,
-     textAlign :'center'
-   },
+  cardAuthor: {
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'center',
+  },
 
-   footer:{
-     flexDirection:'row',
-     justifyContent:'space-around',
-     paddingVertical :20 ,
-     backgroundColor:'#042c45'
-   },
+  footer: {
+    flexDirection: 'column', // Muda para coluna para o conteúdo centralizar melhor
+    justifyContent: 'center',
+    backgroundColor: '#042c45',
+    overflow: 'hidden',
+    paddingVertical: 8, // Garantir que o footer tenha algum espaço mesmo minimizado
+    alignItems: 'center', // Centraliza a área dos botões
+  },
 
-   footerButton:{
-     backgroundColor:'#fbfbfa',
-     paddingVertical :10 ,
-     paddingHorizontal :20 ,
-     borderRadius :8 
-   },
+  footerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly', // Espalha os botões uniformemente
+    alignItems: 'center',
+    width: '106%', // Garante que os botões não ocupem a largura total
+  },
 
-   footerButtonText:{
-     color:'#042c45',
-     fontWeight:'bold'
-   }
+  footerButton: {
+    backgroundColor: '#fbfbfa',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+
+  footerButtonText: {
+    color: '#042c45',
+    fontWeight: 'bold',
+  },
+
+  toggleFooterButton: {
+    position: 'absolute',
+    right: 10,
+    backgroundColor: 'transparent',
+    padding: 8,
+    borderRadius: 50,
+  },
+
+  toggleFooterButtonInner: {
+    padding: 8,
+  },
+
+  toggleFooterButtonText: {
+    fontSize: 24,
+    color: '#042c45',
+    textAlign: 'center',
+  },
+
+  footerBlueArea: {
+    width: '100%',
+    height: 30, // Tamanho da área azul quando minimizado
+    backgroundColor: '#042c45',
+  },
 });
 
 export default PesquisaObra;

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Button, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {  Image, StyleSheet, Text,  TouchableOpacity, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import { NavigationContainer, useNavigation, useRoute } from '@react-navigation/native';
+import { NavigationContainer, useNavigation,  } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Buscar from './components/buscar';
 import Carousel from './components/Carousel';
@@ -12,13 +12,13 @@ import CadastroUsuario from './src/components/Cadastrar';
 import AuthContext, { AuthProvider } from './src/components/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Publicados from './components/Publicados';
-import Pesquisa from './components/Pesquisa';
 import MaisLidas from './src/components/MaisLidos';
 import CadastroLivros from './src/components/CadastroLivro';
+import Episodios from './src/components/Episodios';
  
-
-
-function HomeScreen() {
+ 
+ 
+export function HomeScreen() {
   const navigation = useNavigation();
   return (
     <View style={{flex:1, padding:10}}>
@@ -28,7 +28,7 @@ function HomeScreen() {
    </View>
    {/* // Dentro do HomeScreen ou onde for aplicável */}
 <View style={styles.card}>
-  
+ 
   <TouchableOpacity
   style={styles.card}
   onPress={() =>
@@ -44,7 +44,7 @@ function HomeScreen() {
   </Text>
 </TouchableOpacity>
 </View>
-
+ 
 <View style={styles.card}>
 <TouchableOpacity
   style={styles.card}
@@ -77,10 +77,10 @@ function HomeScreen() {
   </Text>
 </TouchableOpacity>
 </View>
-
+ 
    </View>
   );
-
+ 
 }
 function CadastroLivrosScreen() {
   return (
@@ -100,20 +100,20 @@ function Populares() {
       </View>      
       </View>
   );
-  
+ 
 }
 function MaisLidos() {
   return (
-    
+   
     <MaisLidas/>
   );
-  
+ 
 }
 function CadastroLivro() {
   return (
     <CadastroLivros/>
   );
-  
+ 
 }
 function Enquetes() {
   return (
@@ -124,39 +124,39 @@ function Enquetes() {
       <Text>Enquetes</Text>
  </View>
   );
-  
+ 
 }
-
+ 
 function VitrineScreen() {
   return (
     <PesquisaObra/>
   );
-  
+ 
 }
 function LoginScreen() {
   return (
     <Login/>
   );
-  
+ 
 }
 function CadastroScreen() {
   return (
     <CadastroUsuario/>
   );
-  
+ 
 }
 function ProfileScreen() {
   return (
     <View style={{ flex: 1 }}>
- <Text>Perfil</Text>
-      
+      <Text>Perfil</Text>
+      <Episodios/>
     </View>
   );
 }
 const Stack = createNativeStackNavigator();
-
+ 
 const Tab = createBottomTabNavigator();
-
+ 
 function RootStack() {
   const { isAuthenticated, isLoading } = React.useContext(AuthContext);
   console.log('pilha raiz: ', isAuthenticated)
@@ -166,10 +166,10 @@ function RootStack() {
     </View>)
   }
   return (
-    
+   
     <Stack.Navigator>
            
-
+ 
          {isAuthenticated ?
         (<>
             <Stack.Screen
@@ -178,7 +178,7 @@ function RootStack() {
           options={{
             headerTitle: () => (
               <View style={{ flexDirection: 'row',justifyContent:'space-between', alignItems:'center', alignItems: 'center' }}>
-              
+             
                 <View>
                   <Text style={{ fontSize: 14, color: '#000' }}>Olá,</Text>
                   <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#000' }}>Timóteo</Text>
@@ -191,30 +191,31 @@ function RootStack() {
             ),
           }}
         />
-
+ 
             <Stack.Screen name="Populares" component={Populares}/>
             <Stack.Screen name="MaisLidos" component={MaisLidos}/>
             <Stack.Screen name="Enquetes" component={Enquetes}/>
             <Stack.Screen name="CadastroLivro" component={CadastroLivrosScreen} options={{ presentation: 'modal' }}/>
-
+            <Stack.Screen name="Episodios" component={Episodios} />
             </>)
             :
             (<>
               <Stack.Screen name="Vitrine" component={VitrineScreen} />
               <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Cadastro" component={CadastroScreen} />
-
+              <Stack.Screen name="CadastroUsuario" component={CadastroScreen} />
+ 
               </>)
-
+ 
             }
     </Stack.Navigator>
   )};
-
-
+ 
+ 
   const TabBar = () => {
     return (  
       <Tab.Navigator
         screenOptions={({ route }) => ({
+ 
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
             if (route.name === 'Home') {
@@ -240,11 +241,11 @@ function RootStack() {
  
 export default function App() {
   const queryClient = new QueryClient();
-
+ 
   return (
     <QueryClientProvider client={queryClient}>
           <AuthProvider>
-
+ 
     <NavigationContainer>
       <RootStack/>
     </NavigationContainer>
@@ -258,7 +259,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f9f9f9',
   },
-  
+ 
   // Estilo do card
   card: {
     backgroundColor: '#ffffff',
@@ -271,7 +272,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 5,
   },
-  
+ 
   // Título do card
   cardTitle: {
     fontSize: 18,
@@ -279,7 +280,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: '#333',
   },
-  
+ 
   // Descrição do card
   cardDescription: {
     fontSize: 14,
@@ -287,4 +288,3 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
 });
-

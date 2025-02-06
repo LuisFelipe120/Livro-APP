@@ -22,20 +22,21 @@ export const login = async (body) => {
 //     throw error; // Certifique-se de lançar o erro para que a mutação possa capturá-lo
 //   }
 // };
-export const livros = async () => {
-  const formData = new FormData()
+export const createlivros = async (formData) => {
   try {
-    const response = await api.post('/livros', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
+    const { data } = await api.post('/livros', formData);
+    return data;
   } catch (error) {
-    console.error('Erro ao enviar os dados:', error);
-    if (error.response) {
-      console.error('Erro de resposta:', error.response);
-    }
-    throw error;
-  
-  }}
+    console.log(error);
+    throw error; // Certifique-se de lançar o erro para que a mutação possa capturá-lo
+  }
+};
+export const cadastrar = async (formData) => {
+  try {
+    const { data } = await api.post('/usuarios', formData);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error; // Certifique-se de lançar o erro para que a mutação possa capturá-lo
+  }
+};

@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import {
   SafeAreaView,
@@ -8,7 +9,14 @@ import {
   View,
   Alert,
   ScrollView,
+  Image,
 } from 'react-native';
+import RNPickerSelect from "react-native-picker-select";
+ 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AuthContext from './auth';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { cadastrar } from '../services/fetchs';
  
 const CadastroUsuario = () => {
   const [nome, setNome] = useState('');
@@ -17,53 +25,89 @@ const CadastroUsuario = () => {
   const [email, setEmail] = useState('');
   const [confirmarEmail, setConfirmarEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [isAutor, setIsAutor] = useState(false);
-  const [isLeitor, setIsLeitor] = useState(false);
+  const [flag, setFlag] = useState(null);
+  const [avatar, setAvatar] = useState(null);
+  const { setIsAuthenticated } = React.useContext(AuthContext);
  
-  const handleCadastro = async () => {
-    if (email !== confirmarEmail) {
-      Alert.alert('Erro', 'Os e-mails não coincidem.');
-      return;
-    }
  
-    try {
-      const response = await fetch('http://localhost:3000/usuarios', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nome,
-          cpf,
-          telefone,
-          email,
-          senha,
-          flag: {
-            autor: isAutor,
-            leitor: isLeitor,
-          },
-        }),
+  const mutation = useMutation({
+    mutationFn: ({nome, cpf, email, senha, telefone, flag, avatar}) => {
+      const formData = new FormData();
+     
+    formData.append('nome', nome);
+    formData.append('cpf', cpf);
+    formData.append('email', email);
+    formData.append('senha', senha);
+    formData.append('telefone', telefone);
+    formData.append('flag', Number(flag));
+ 
+    // Verificando se a imagem foi selecionada
+    if (avatar) {
+      console.log('aqui imagem',avatar);  // Loga o caminho da imagem para verificação
+ 
+      formData.append('imagem', {
+        uri: avatar,
+        type: 'image/jpg', // Ajuste conforme o tipo da imagem
+        name: 'imagem.jpg', // Ajuste conforme o nome desejado
       });
  
-      const data = await response.json();
- 
-      if (response.ok) {
-        Alert.alert('Sucesso', 'Usuário cadastrado com sucesso!');
-        setNome('');
-        setCpf('');
-        setTelefone('');
-        setEmail('');
-        setConfirmarEmail('');
-        setSenha('');
-        setIsAutor(false);
-        setIsLeitor(false);
+    }
+      return cadastrar(formData);
+    },
+    onSuccess: async (data) => {
+      console.log('Dados recebidos:', data);
+      const user = data?.user;
+      const token = data?.user?.token;
+      if (user && token) {
+        await AsyncStorage.setItem('localUser', JSON.stringify(user));
+        await AsyncStorage.setItem('localToken', token);
+        setIsAuthenticated(true);
       } else {
-        Alert.alert('Erro', data.error || 'Erro ao cadastrar o usuário');
+        console.error('Dados inválidos:', data);
       }
-    } catch (error) {
-      Alert.alert('Erro', 'Não foi possível cadastrar o usuário');
+    }
+  });
+ 
+  const handleImageUser = () => {
+    Alert.alert("Selecione", "Informe de onde você quer pegar a foto", [
+      {
+        text: "Galeria",
+        onPress: () => pickImageFromGalery(),
+        style: 'default',
+      },
+      {
+        text: "Camera",
+        onPress: () => pickImageFromCamera(),
+        style: 'default',
+      },
+    ]);
+  };
+ 
+  const pickImageFromGalery = async () => {
+    const options = {
+      mediaType: 'photo',
+    };
+    const result = await launchImageLibrary(options);
+    if (result?.assets && result.assets.length > 0) {
+      console.log('Imagem selecionada da galeria:', result);
+      const imageUri = result.assets[0].uri
+      console.log("Imagem da Galeria:", imageUri); // Verifique a URI
+      setAvatar(imageUri); // Atualize o estado com a URI
     }
   };
+ 
+  const pickImageFromCamera = async () => {
+    const options = {
+      mediaType: 'photo',
+    };
+    const result = await launchCamera(options);
+    if (result?.assets && result.assets.length > 0) {
+      const imageUri = result.assets[0].uri
+      console.log("Imagem da Camera:", imageUri); // Verifique a URI
+      setAvatar(imageUri); // Atualize o estado com a URI
+    }
+  };
+ 
  
   return (
     <SafeAreaView style={styles.container}>
@@ -117,26 +161,34 @@ const CadastroUsuario = () => {
  
         <Text style={styles.sectionTitle}>Escolha o campo abaixo</Text>
         <View style={styles.checkboxContainer}>
-          <TouchableOpacity
-            style={styles.checkboxItem}
-            onPress={() => setIsAutor(!isAutor)}
-          >
-            <View style={[styles.checkbox, isAutor && styles.checkedCheckbox]} />
-            <Text style={styles.checkboxLabel}>Autor</Text>
-          </TouchableOpacity>
- 
-          <TouchableOpacity
-            style={styles.checkboxItem}
-            onPress={() => setIsLeitor(!isLeitor)}
-          >
-            <View style={[styles.checkbox, isLeitor && styles.checkedCheckbox]} />
-            <Text style={styles.checkboxLabel}>Leitor</Text>
-          </TouchableOpacity>
+        <Text style={styles.label}>Escolha entre autor e leitor</Text>
+          <RNPickerSelect
+            onValueChange={(value) => setFlag(Number(value))}
+            items={[
+              { label: "leitor", value: "0" },
+              { label: "autor", value: "1" },
+             
+            ]}
+            style={pickerSelectStyles}
+          />
         </View>
- 
-        <TouchableOpacity style={styles.button} onPress={handleCadastro}>
-          <Text style={styles.buttonText}>Registrar</Text>
-        </TouchableOpacity>
+         <View>
+                  <TouchableOpacity style={styles.button} onPress={handleImageUser}>
+                    <Text style={styles.buttonText}>Selecionar Imagem</Text>
+                  </TouchableOpacity>
+                  {avatar && (
+                    <Image source={{ uri: avatar }} style={styles.image} />
+                  )}
+                </View>
+       
+   <TouchableOpacity
+           style={styles.button}
+           onPress={() => {
+             mutation.mutate({nome, cpf, email, senha, telefone, flag, avatar:avatar });
+           }}
+         >
+           <Text style={styles.buttonText}>Cadastrar</Text>
+         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -215,6 +267,19 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+});
+ 
+const pickerSelectStyles = StyleSheet.create({
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: 'purple',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
   },
 });
  
