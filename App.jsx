@@ -14,11 +14,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Publicados from './components/Publicados';
 import MaisLidas from './src/components/MaisLidos';
 import CadastroLivros from './src/components/CadastroLivro';
-<<<<<<< HEAD
-import ObrasLidasCapitulo from './components/ObrasLidasCapitulos';
-=======
 import Episodios from './src/components/Episodios';
->>>>>>> ba92430857373682a011876d2b3e2f16a87b98a0
  
  
  
@@ -31,13 +27,8 @@ export function HomeScreen() {
    <Carousel/>
    </View>
    {/* // Dentro do HomeScreen ou onde for aplicável */}
-<<<<<<< HEAD
 {/* <View style={styles.card}>
   
-=======
-<View style={styles.card}>
- 
->>>>>>> ba92430857373682a011876d2b3e2f16a87b98a0
   <TouchableOpacity
   style={styles.card}
   onPress={() =>
@@ -52,13 +43,8 @@ export function HomeScreen() {
     Descubra os livros mais populares entre os leitores.
   </Text>
 </TouchableOpacity>
-<<<<<<< HEAD
 </View> */}
 
-=======
-</View>
- 
->>>>>>> ba92430857373682a011876d2b3e2f16a87b98a0
 <View style={styles.card}>
 <TouchableOpacity
   style={styles.card}
@@ -110,10 +96,6 @@ function ObrasLidasCapituloScreen() {
   return (
    <ObrasLidasCapitulo/>
   );
-<<<<<<< HEAD
-=======
- 
->>>>>>> ba92430857373682a011876d2b3e2f16a87b98a0
 }
 // function Populares() {
 //   return (
@@ -132,17 +114,11 @@ function MaisLidos() {
   );
  
 }
-function CadastroLivro() {
+function CadastroLivrosScreen() {
   return (
     <CadastroLivros/>
   );
  
-}
-function CadastroLivro() {
-  return (
-    <CadastroLivros/>
-  );
-  
 }
 function Enquetes() {
   return (
@@ -166,11 +142,7 @@ function LoginScreen() {
   return (
     <Login/>
   );
-<<<<<<< HEAD
     
-=======
- 
->>>>>>> ba92430857373682a011876d2b3e2f16a87b98a0
 }
 function CadastroScreen() {
   return (
@@ -182,7 +154,6 @@ function ProfileScreen() {
   return (
     <View style={{ flex: 1 }}>
       <Text>Perfil</Text>
-      <Episodios/>
     </View>
   );
 }
@@ -224,37 +195,20 @@ function RootStack() {
             ),
           }}
         />
-<<<<<<< HEAD
 
             {/* <Stack.Screen name="Populares" component={Populares}/> */}
-=======
- 
-            <Stack.Screen name="Populares" component={Populares}/>
->>>>>>> ba92430857373682a011876d2b3e2f16a87b98a0
             <Stack.Screen name="MaisLidos" component={MaisLidos}/>
             <Stack.Screen name="Enquetes" component={Enquetes}/>
-<<<<<<< HEAD
-          <Stack.Screen name="LivroCadastro" component={CadastroLivro}    options={{
-          presentation: 'modal'
-        }} />
-
-=======
             <Stack.Screen name="ObrasLidasCapitulo" component={ObrasLidasCapituloScreen}/>
 
             <Stack.Screen name="CadastroLivro" component={CadastroLivrosScreen} options={{ presentation: 'modal' }}/>
             <Stack.Screen name="Episodios" component={Episodios} />
->>>>>>> atualizacao
             </>)
             :
             (<>
               <Stack.Screen name="Vitrine" component={VitrineScreen} />
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="CadastroUsuario" component={CadastroScreen} />
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> ba92430857373682a011876d2b3e2f16a87b98a0
               </>)
  
             }

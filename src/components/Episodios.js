@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, View, Text, Image, FlatList, TouchableOpacity, Modal, TextInput, Button } from 'react-native';
+import { getCapitulosUsuario } from '../services/fetchs';
+import { useQuery } from '@tanstack/react-query';
 
 const Episodios = () => {
   const [modalVisible, setModalVisible] = useState(false); // Controle do Modal de Avaliação
@@ -9,6 +11,10 @@ const Episodios = () => {
   const [abaAtiva, setAbaAtiva] = useState('episodios'); // Controla qual aba está ativa
   const [avaliacoes, setAvaliacoes] = useState([]); // Armazena as avaliações enviadas
   const [novoCapitulo, setNovoCapitulo] = useState({ titulo: '' }); // Armazena o título do novo capítulo
+
+  const { data: capUsuario, error, isLoading } = useQuery({ queryKey: ['getCapitulosUsuario'], queryFn: getCapitulosUsuario });
+
+console.log(capUsuario)
 
   const livro = {
     imagemCapa: 'https://via.placeholder.com/150',
@@ -73,15 +79,10 @@ const Episodios = () => {
     return estrelas;
   };
 
-  const renderEpisodio = ({ item }) => (
-    <View style={styles.card}>
-      <View style={styles.cardContent}>
-        <Text style={styles.episodioTitulo}>{item.titulo}</Text>
-        <Text style={styles.episodioData}>{item.data}</Text>
-        <Text style={styles.episodioCurtidas}>{item.curtidas} likes</Text>
-      </View>
-    </View>
-  );
+  // const renderEpisodio = ({ item }) => (
+    
+    
+  // );
 
   const renderAvaliacao = ({ item }) => (
     <View style={styles.card}>
@@ -155,11 +156,18 @@ const Episodios = () => {
       </View>
 
       {/* Exibe a lista de episódios ou recomendações com base na aba ativa */}
-      {abaAtiva === 'episodios' ? (
+      {/* {abaAtiva === 'episodios' ?  (
         <FlatList
-          data={episodios}
-          keyExtractor={(item) => item.id}
-          renderItem={renderEpisodio}
+          data={capUsuario}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({item}) =>(
+              <View style={styles.card}>
+      <View style={styles.cardContent}>
+        <Text style={styles.episodioTitulo}>{item.nome}</Text>
+        <Text style={styles.episodioData}>{item.ordemCapitulo}</Text>
+      </View>
+    </View>
+          )}
           contentContainerStyle={styles.lista}
         />
       ) : (
@@ -169,7 +177,7 @@ const Episodios = () => {
           renderItem={renderAvaliacao}
           contentContainerStyle={styles.lista}
         />
-      )}
+      )} */}
 
       {/* Modal de Avaliação */}
       <Modal
@@ -221,6 +229,13 @@ const Episodios = () => {
               value={novoCapitulo.titulo}
               onChangeText={(text) => setNovoCapitulo({ titulo: text })}
             />
+            <TextInput
+              style={styles.input}
+              placeholder="Ordem do capitulo"
+              value={novoCapitulo.titulo}
+              onChangeText={(text) => setNovoCapitulo({ titulo: text })}
+            />
+           
             <View style={styles.modalButtons}>
               <Button title="Cancelar" onPress={() => setModalCapituloVisible(false)} />
               <Button title="Salvar Capítulo" onPress={handleCriarCapitulo} />

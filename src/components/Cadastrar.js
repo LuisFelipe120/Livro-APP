@@ -108,19 +108,7 @@ const CadastroUsuario = () => {
     }
   };
 
- 
-  const pickImageFromCamera = async () => {
-    const options = {
-      mediaType: 'photo',
-    };
-    const result = await launchCamera(options);
-    if (result?.assets && result.assets.length > 0) {
-      const imageUri = result.assets[0].uri
-      console.log("Imagem da Camera:", imageUri); // Verifique a URI
-      setAvatar(imageUri); // Atualize o estado com a URI
-    }
-  };
- 
+
  
   return (
     <SafeAreaView style={styles.container}>

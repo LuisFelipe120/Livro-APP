@@ -25,7 +25,10 @@ export const getCapitulos = async () => {
   const { data } = await api.get('/capitulos')
   return data;
 }
-
+export const getCapitulosUsuario = async () => {
+  const { data } = await api.get('/capitulos/livros_id')
+  return data;
+}
 
 
 export const createlivros = async (formData) => {
