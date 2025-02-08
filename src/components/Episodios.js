@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, View, Text, Image, FlatList, TouchableOpacity, Modal, TextInput, Button } from 'react-native';
-import { getCapitulosUsuario } from '../services/fetchs';
+import { getCapitulosLivros } from '../services/fetchs';
 import { useQuery } from '@tanstack/react-query';
 
-const Episodios = () => {
+const Episodios = ({livros_id }) => {
   const [modalVisible, setModalVisible] = useState(false); // Controle do Modal de Avaliação
   const [modalCapituloVisible, setModalCapituloVisible] = useState(false); // Controle do Modal de Criação de Capítulo
   const [avaliacao, setAvaliacao] = useState(0); // Armazena a avaliação em estrelas
@@ -11,11 +11,14 @@ const Episodios = () => {
   const [abaAtiva, setAbaAtiva] = useState('episodios'); // Controla qual aba está ativa
   const [avaliacoes, setAvaliacoes] = useState([]); // Armazena as avaliações enviadas
   const [novoCapitulo, setNovoCapitulo] = useState({ titulo: '' }); // Armazena o título do novo capítulo
-
-  const { data: capUsuario, error, isLoading } = useQuery({ queryKey: ['getCapitulosUsuario'], queryFn: getCapitulosUsuario });
-
-console.log(capUsuario)
-
+  const { data: capUsuario, error, isLoading } = useQuery({
+    queryKey: ['getCapitulosLivros', livros_id],  // Agora estamos passando o livros_id na queryKey
+    queryFn: () => getCapitulosLivros(livros_id),  // Passando o livros_id para a função
+    enabled: !!livros_id,  // Só faz a requisição se livros_id estiver definido
+  });
+  console.log(capUsuario)
+  console.log(livros_id)
+  
   const livro = {
     imagemCapa: 'https://via.placeholder.com/150',
     categoria: 'Ficção Científica',
@@ -156,7 +159,7 @@ console.log(capUsuario)
       </View>
 
       {/* Exibe a lista de episódios ou recomendações com base na aba ativa */}
-      {/* {abaAtiva === 'episodios' ?  (
+      {abaAtiva === 'episodios' ?  (
         <FlatList
           data={capUsuario}
           keyExtractor={(item) => item.id.toString()}
@@ -177,7 +180,7 @@ console.log(capUsuario)
           renderItem={renderAvaliacao}
           contentContainerStyle={styles.lista}
         />
-      )} */}
+      )}
 
       {/* Modal de Avaliação */}
       <Modal

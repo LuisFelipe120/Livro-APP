@@ -25,10 +25,17 @@ export const getCapitulos = async () => {
   const { data } = await api.get('/capitulos')
   return data;
 }
-export const getCapitulosUsuario = async () => {
-  const { data } = await api.get('/capitulos/livros_id')
-  return data;
-}
+export const getCapitulosLivros = async (livros_id) => {
+  try {
+    const { data } = await api.get(`/capitulos/${livros_id}`);
+    return data;
+  } catch (error) {
+    console.error("Erro na requisição:", error.response ? error.response : error.message);
+  }
+};
+
+
+// No componente React
 
 
 export const createlivros = async (formData) => {
