@@ -10,11 +10,12 @@ import PesquisaObra from './src/components/Vitrine';
 import Login from './src/components/Login';
 import CadastroUsuario from './src/components/Cadastrar';
 import AuthContext, { AuthProvider } from './src/components/auth';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import Publicados from './components/Publicados';
 import MaisLidas from './src/components/MaisLidos';
 import CadastroLivros from './src/components/CadastroLivro';
 import Episodios from './src/components/Episodios';
+import { getLivros } from './src/services/fetchs';
  
  
  
@@ -120,6 +121,24 @@ function CadastroLivrosScreen() {
   );
  
 }
+
+function EpisodiosList ()
+{
+  const [livrosId, setLivrosId] = React.useState(null);
+
+  const { data: livros, error, isLoading } = useQuery({ queryKey: ['getLivros'], queryFn: getLivros });
+console.log(livros)
+// Certifique-se de atualizar livrosId corretamente
+React.useEffect(() => {
+  if(livros){
+    setLivrosId(livros.id);  // Onde idDoLivro é o valor que você está recebendo ou calculando
+
+  }
+}, [livros]);
+
+return <Episodios livros_id={livrosId} />;
+
+}
 function Enquetes() {
   return (
     <View style={{ flex: 1}}>
@@ -202,7 +221,7 @@ function RootStack() {
             <Stack.Screen name="ObrasLidasCapitulo" component={ObrasLidasCapituloScreen}/>
 
             <Stack.Screen name="CadastroLivro" component={CadastroLivrosScreen} options={{ presentation: 'modal' }}/>
-            <Stack.Screen name="Episodios" component={Episodios} />
+            <Stack.Screen name="Episodios" component={EpisodiosList} />
             </>)
             :
             (<>
