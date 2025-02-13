@@ -53,7 +53,7 @@ const Publicados = () => {
         numColumns={2}
         columnWrapperStyle={styles.row}
         renderItem={({ item }) => (          
-          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Episodios', {
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Capitulos', {
             itemId: item?.id,
           })} >
             <Image source={{ uri: IMAGE_BASE_URL + item.imagem }} resizeMode='cover' style={styles.bookImage} />

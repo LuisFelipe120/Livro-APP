@@ -1,39 +1,47 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, View, Text, Image, FlatList, TouchableOpacity, Modal, TextInput, Button } from 'react-native';
-import { getCapitulosLivros } from '../services/fetchs';
+import { getCapitulosLivros, getLivros, getlivrosid } from '../services/fetchs';
 import { useQuery } from '@tanstack/react-query';
 
-const Episodios = ({livros_id }) => {
-  const [modalVisible, setModalVisible] = useState(false); // Controle do Modal de Avaliação
-  const [modalCapituloVisible, setModalCapituloVisible] = useState(false); // Controle do Modal de Criação de Capítulo
-  const [avaliacao, setAvaliacao] = useState(0); // Armazena a avaliação em estrelas
-  const [comentario, setComentario] = useState(''); // Armazena o comentário do usuário
-  const [abaAtiva, setAbaAtiva] = useState('episodios'); // Controla qual aba está ativa
-  const [avaliacoes, setAvaliacoes] = useState([]); // Armazena as avaliações enviadas
-  const [novoCapitulo, setNovoCapitulo] = useState({ titulo: '' }); // Armazena o título do novo capítulo
-  const { data: capUsuario, error, isLoading } = useQuery({
-    queryKey: ['getCapitulosLivros', livros_id],  // Agora estamos passando o livros_id na queryKey
-    queryFn: () => getCapitulosLivros(livros_id),  // Passando o livros_id para a função
-    enabled: !!livros_id,  // Só faz a requisição se livros_id estiver definido
+const Capitulos = ({ livros_id, id }) => {
+  // --- Todos os Hooks declarados primeiro ---
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalCapituloVisible, setModalCapituloVisible] = useState(false);
+  const [avaliacao, setAvaliacao] = useState(0);
+  const [comentario, setComentario] = useState('');
+  const [abaAtiva, setAbaAtiva] = useState('episodios');
+  const [avaliacoes, setAvaliacoes] = useState([]);
+  const [novoCapitulo, setNovoCapitulo] = useState({ titulo: '' });
+  const IMAGE_BASE_URL = 'http://10.57.45.29:3333/images/';
+  const { 
+    data: livros, 
+    error: livroError, 
+    isLoading: livroLoading  
+  } = useQuery({ 
+    queryKey: ['getlivrosid', id], // Adicione o id como dependência
+    queryFn: () => getlivrosid(id),
+    enabled: !!id,
+    onError: (error) => {
+      console.error('Erro na query:', error);
+    },
   });
-  console.log(capUsuario)
-  console.log(livros_id)
-  
-  const livro = {
-    imagemCapa: 'https://via.placeholder.com/150',
-    categoria: 'Ficção Científica',
-    titulo: 'O Guia do Mochileiro das Galáxias',
-    autor: 'Douglas Adams',
-    views: 1000,
-    likes: 500,
-    avaliacao: 4.5,
-  };
+ console.log('aqui livro:',livros)
+  // --- useQuery para buscar dados da API ---
+  const { data: capUsuario, error, isLoading } = useQuery({
+    
+    queryKey: ['getCapitulosLivros', livros_id],
+    queryFn: () => getCapitulosLivros(livros_id),
+    enabled: !!livros_id,
+    onError: (error) => {
+      console.error('Erro na query:', error);
+    },
+  });
 
-  const [episodios, setEpisodios] = useState([
-    { id: '1', titulo: 'Episódio 1: O Começo', data: '01/01/2023', curtidas: 120 },
-    { id: '2', titulo: 'Episódio 2: A Jornada', data: '08/01/2023', curtidas: 150 },
-    { id: '3', titulo: 'Episódio 3: O Desafio', data: '15/01/2023', curtidas: 200 },
-  ]);
+  // --- Verificações condicionais APÓS Hooks ---
+  if (isLoading) return <Text>Carregando...</Text>;
+  if (error) return <Text>Ocorreu um erro: {error.message}</Text>;
+
+
 
   const handleCancelar = () => {
     // Função chamada ao cancelar
@@ -87,39 +95,26 @@ const Episodios = ({livros_id }) => {
     
   // );
 
-  const renderAvaliacao = ({ item }) => (
-    <View style={styles.card}>
-      <View style={styles.cardContent}>
-        <Text style={styles.avaliacaoAutor}>{item.autor}</Text>
-        <View style={styles.estrelasContainer}>{renderEstrelas(item.estrelas)}</View>
-        <Text style={styles.avaliacaoComentario}>{item.comentario}</Text>
-      </View>
-    </View>
-  );
+
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Cabeçalho com informações do livro */}
-      <View style={styles.header}>
-        <Image source={{ uri: livro.imagemCapa }} style={styles.backgroundImage} />
-        <View style={styles.overlay} />
-        <View style={styles.headerContent}>
-          <Text style={styles.categoria}>{livro.categoria}</Text>
-          <Text style={styles.tituloPrincipal}>{livro.titulo}</Text>
-          <Text style={styles.autor}>{livro.autor}</Text>
-          <View style={styles.statsRow}>
-            <Text style={styles.stats}>{livro.views} views</Text>
-            <Text style={styles.stats}>{livro.likes} likes</Text>
-            <Text style={styles.stats}>⭐ {livro.avaliacao}</Text>
-            <TouchableOpacity
-              style={styles.rateButton}
-              onPress={() => setModalVisible(true)} // Abre o modal de avaliação ao clicar
-            >
-              <Text style={styles.rateText}>Avaliação</Text>
-            </TouchableOpacity>
-          </View>
+  {/* Cabeçalho com informações do livro */}
+  <View style={styles.header}>
+    {livros && livros.length > 0 && (
+      <View style={styles.headerContent}>
+        {/* Imagem de fundo */}
+        <Image source={{ uri: IMAGE_BASE_URL + livros[0].imagem }} style={styles.backgroundImage} />
+        
+        {/* Sobreposição com texto */}
+        <View style={styles.overlay}>
+          <Text style={styles.categoria}>{livros[0].nome}</Text>
+          <Text style={styles.tituloPrincipal}>{livros[0].sinopse}</Text>
+          <Text style={styles.autor}>{livros[0].usuarios_id}</Text>
         </View>
       </View>
+    )}
+  </View>
 
       {/* Botões para alternar entre Episódios, Criar Capítulo e Recomendações */}
       <View style={styles.botoesAbaContainer}>
@@ -143,16 +138,6 @@ const Episodios = ({livros_id }) => {
             </Text>
             {abaAtiva === 'criarCapitulo' && <View style={styles.tracoAtivo} />}
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.botaoAba}
-            onPress={() => setAbaAtiva('recomendacoes')}
-          >
-            <Text style={[styles.textoBotaoAba, abaAtiva === 'recomendacoes' && styles.textoBotaoAbaAtivo]}>
-              Recomendações
-            </Text>
-            {abaAtiva === 'recomendacoes' && <View style={styles.tracoAtivo} />}
-          </TouchableOpacity>
         </View>
         {/* Linha divisória cinza clara */}
         <View style={styles.linhaDivisoria} />
@@ -160,17 +145,16 @@ const Episodios = ({livros_id }) => {
 
       {/* Exibe a lista de episódios ou recomendações com base na aba ativa */}
       {abaAtiva === 'episodios' ?  (
-        <FlatList
-          data={capUsuario}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({item}) =>(
-              <View style={styles.card}>
-      <View style={styles.cardContent}>
-        <Text style={styles.episodioTitulo}>{item.nome}</Text>
-        <Text style={styles.episodioData}>{item.ordemCapitulo}</Text>
-      </View>
-    </View>
-          )}
+         <FlatList
+                data={capUsuario || []}  // Verifique se capUsuario está carregado
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.card}>
+                    <Text style={styles.episodioTitulo}>{item.nome}</Text>
+                    <Text style={styles.episodioData}>{item.ordem_capitulo}</Text>
+                  </View>
+                )}
+              
           contentContainerStyle={styles.lista}
         />
       ) : (
@@ -258,20 +242,26 @@ const styles = StyleSheet.create({
   header: {
     height: 240,
     position: 'relative',
+    overflow: 'hidden', // Impede que o conteúdo "vaze" para fora da área do cabeçalho
   },
   backgroundImage: {
     width: '100%',
     height: '100%',
     position: 'absolute',
+    top: 0,
+    left: 0,
+    resizeMode: 'cover', // Garante que a imagem se ajuste corretamente
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // A sobreposição com fundo semitransparente
+    justifyContent: 'flex-end', // Alinha o texto ao final da imagem
+    padding: 16, // Espaçamento para evitar que o texto encoste nas bordas
+    zIndex: 1, // Garante que o texto fique acima da imagem
   },
   headerContent: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
+    position: 'relative', // Garante que o conteúdo fique acima da imagem
+    height: '100%', // Ocupa toda a altura do cabeçalho
   },
   categoria: {
     fontSize: 14,
@@ -289,6 +279,7 @@ const styles = StyleSheet.create({
     color: '#FFF',
     marginBottom: 16,
   },
+  
   statsRow: {
     flexDirection: 'row',
     marginBottom: 16,
@@ -429,4 +420,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Episodios;
+export default Capitulos;

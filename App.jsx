@@ -14,8 +14,8 @@ import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-quer
 import Publicados from './components/Publicados';
 import MaisLidas from './src/components/MaisLidos';
 import CadastroLivros from './src/components/CadastroLivro';
-import Episodios from './src/components/Episodios';
 import { getLivros } from './src/services/fetchs';
+import Capitulos from './src/components/Episodios';
  
  
  
@@ -122,22 +122,25 @@ function CadastroLivrosScreen() {
  
 }
 
-function EpisodiosList ()
-{
+function EpisodiosList() {
   const [livrosId, setLivrosId] = React.useState(null);
 
-  const { data: livros, error, isLoading } = useQuery({ queryKey: ['getLivros'], queryFn: getLivros });
-console.log(livros)
-// Certifique-se de atualizar livrosId corretamente
-React.useEffect(() => {
-  if(livros){
-    setLivrosId(livros.id);  // Onde idDoLivro é o valor que você está recebendo ou calculando
+  const { data: livros, error, isLoading } = useQuery({ 
+    queryKey: ['getLivros'], 
+    queryFn: getLivros 
+  });
 
-  }
-}, [livros]);
+  React.useEffect(() => {
+    if (livros && livros.length > 0) {
+      // Seleciona o ID do primeiro livro (ajuste conforme sua lógica)
+      setLivrosId(livros[0].id);
+    }
+  }, [livros]);
 
-return <Episodios livros_id={livrosId} />;
+  if (isLoading) return <Text>Carregando livros...</Text>;
+  if (error) return <Text>Erro ao carregar livros: {error.message}</Text>;
 
+  return <Capitulos livros_id={livrosId} />;
 }
 function Enquetes() {
   return (
@@ -221,7 +224,7 @@ function RootStack() {
             <Stack.Screen name="ObrasLidasCapitulo" component={ObrasLidasCapituloScreen}/>
 
             <Stack.Screen name="CadastroLivro" component={CadastroLivrosScreen} options={{ presentation: 'modal' }}/>
-            <Stack.Screen name="Episodios" component={EpisodiosList} />
+            <Stack.Screen name="Capitulos" component={EpisodiosList} />
             </>)
             :
             (<>

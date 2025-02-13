@@ -33,8 +33,15 @@ export const getCapitulosLivros = async (livros_id) => {
     console.error("Erro na requisição:", error.response ? error.response : error.message);
   }
 };
-
-
+export const getlivrosid = async (id) => {
+  try {
+    const { data } = await api.get(`/livros/${id}`);
+    return data || {}; // Retorna um objeto vazio se data for undefined
+  } catch (error) {
+    console.error("Erro na requisição:", error.response?.data || error.message);
+    throw new Error("Falha ao buscar livro");
+  }
+};
 // No componente React
 
 
