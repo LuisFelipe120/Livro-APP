@@ -1,37 +1,26 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, View, Text, Image, FlatList, TouchableOpacity, Modal, TextInput, Button } from 'react-native';
-import { getCapitulosLivros, getLivros, getlivrosid } from '../services/fetchs';
-import { useQuery } from '@tanstack/react-query';
-
+import { capitulos, getCapitulosLivros, getLivros, getlivrosid } from '../services/fetchs';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useRoute } from '@react-navigation/native';
+import DocumentPicker from 'react-native-document-picker';
 const Capitulos = ({ livros_id, id }) => {
   // --- Todos os Hooks declarados primeiro ---
+  const route = useRoute();
+  const { itemId, livroNome, livroImagem, livroSinopse } = route.params;
   const [modalVisible, setModalVisible] = useState(false);
   const [modalCapituloVisible, setModalCapituloVisible] = useState(false);
   const [avaliacao, setAvaliacao] = useState(0);
   const [comentario, setComentario] = useState('');
   const [abaAtiva, setAbaAtiva] = useState('episodios');
-  const [avaliacoes, setAvaliacoes] = useState([]);
-  const [novoCapitulo, setNovoCapitulo] = useState({ titulo: '' });
   const IMAGE_BASE_URL = 'http://10.57.45.29:3333/images/';
-  const { 
-    data: livros, 
-    error: livroError, 
-    isLoading: livroLoading  
-  } = useQuery({ 
-    queryKey: ['getlivrosid', id], // Adicione o id como dependência
-    queryFn: () => getlivrosid(id),
-    enabled: !!id,
-    onError: (error) => {
-      console.error('Erro na query:', error);
-    },
-  });
- console.log('aqui livro:',livros)
+
   // --- useQuery para buscar dados da API ---
   const { data: capUsuario, error, isLoading } = useQuery({
     
-    queryKey: ['getCapitulosLivros', livros_id],
-    queryFn: () => getCapitulosLivros(livros_id),
-    enabled: !!livros_id,
+    queryKey: ['getCapitulosLivros', itemId],
+    queryFn: () => getCapitulosLivros(itemId),
+    enabled: !!itemId,
     onError: (error) => {
       console.error('Erro na query:', error);
     },
@@ -50,71 +39,75 @@ const Capitulos = ({ livros_id, id }) => {
     setComentario('');
   };
 
-  const handleAvaliar = () => {
-    // Adiciona a nova avaliação à lista de avaliações
-    const novaAvaliacao = {
-      id: String(avaliacoes.length + 1),
-      autor: 'Usuário Anônimo', // Pode ser substituído por um nome real
-      estrelas: avaliacao,
-      comentario: comentario,
-    };
-    setAvaliacoes([...avaliacoes, novaAvaliacao]);
-    setModalVisible(false);
-    setAvaliacao(0);
-    setComentario('');
-  };
+  const [capitulo, setCapitulo] = useState('');
+    const [ordem_capitulo, setOrdem_Capitulo] = useState('');
+    const [upload, setUpload] = useState(null);
 
-  const handleCriarCapitulo = () => {
-    // Adiciona o novo capítulo à lista de episódios
-    const dataAtual = new Date().toLocaleDateString(); // Pega a data atual
-    const novoCapituloCompleto = {
-      id: String(episodios.length + 1),
-      titulo: novoCapitulo.titulo,
-      data: dataAtual, // Define a data atual
-      curtidas: 0, // Inicia com 0 curtidas
-    };
-    setEpisodios([...episodios, novoCapituloCompleto]);
-    setModalCapituloVisible(false);
-    setNovoCapitulo({ titulo: '' }); // Limpa o campo de título
-  };
+  const mutation = useMutation({
+    mutationFn: ({capitulo, ordem_capitulo, upload}) => {
+      const formData = new FormData();
+      
+    formData.append('capitulo', capitulo);
+    formData.append('ordem_capitulo', ordem_capitulo);
 
-  const renderEstrelas = (quantidade) => {
-    const estrelas = [];
-    for (let i = 1; i <= 5; i++) {
-      estrelas.push(
-        <Text key={i} style={i <= quantidade ? styles.estrelaSelecionada : styles.estrela}>
-          ★
-        </Text>
-      );
+
+    // Verificando se a imagem foi selecionada
+   // Verificando se o PDF foi selecionado
+   if (upload) {
+    formData.append('pdf', {
+      uri: upload.uri,
+      type: upload.type, // Tipo do arquivo, por exemplo, 'application/pdf'
+      name: upload.name, // Nome do arquivo
+    });
+  }
+      return capitulos(formData);
+    },
+    onSuccess: async (data) => {
+      console.log('Dados recebidos:', data);
+
+      // Verifica se a resposta contém os dados esperados
+      if (!data || !data.user) {
+        console.error('Erro: Resposta inesperada da API', data);
+        Alert.alert('Erro', 'Erro no cadastro. Tente novamente.');
+        return;
+      }
+    
+      // Atualiza estado de autenticação
+      setIsAuthenticated(true);
+    
+      // Mensagem de sucesso para o usuário
+      Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
     }
-    return estrelas;
+  });
+  const handleSelectPDF = async () => {
+    try {
+      const result = await DocumentPicker.pick({
+        type: [DocumentPicker.types.pdf], // Selecionar apenas arquivos PDF
+      });
+      setUpload(result[0]);
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        console.log('Seleção de documento cancelada');
+      } else {
+        console.error('Erro ao selecionar documento', err);
+      }
+    }
   };
-
-  // const renderEpisodio = ({ item }) => (
-    
-    
-  // );
-
 
 
   return (
     <SafeAreaView style={styles.container}>
-  {/* Cabeçalho com informações do livro */}
-  <View style={styles.header}>
-    {livros && livros.length > 0 && (
-      <View style={styles.headerContent}>
-        {/* Imagem de fundo */}
-        <Image source={{ uri: IMAGE_BASE_URL + livros[0].imagem }} style={styles.backgroundImage} />
-        
-        {/* Sobreposição com texto */}
-        <View style={styles.overlay}>
-          <Text style={styles.categoria}>{livros[0].nome}</Text>
-          <Text style={styles.tituloPrincipal}>{livros[0].sinopse}</Text>
-          <Text style={styles.autor}>{livros[0].usuarios_id}</Text>
+      {/* Cabeçalho com imagem de fundo */}
+      <View style={styles.header}>
+        <Image source={{ uri: IMAGE_BASE_URL + livroImagem }} style={styles.backgroundImage} />
+        <View style={styles.overlay} />
+
+        {/* Texto sobreposto */}
+        <View style={styles.headerContent}>
+          <Text style={styles.titulo}>{livroNome}</Text>
+          <Text style={styles.sinopse}>{livroSinopse}</Text>
         </View>
       </View>
-    )}
-  </View>
 
       {/* Botões para alternar entre Episódios, Criar Capítulo e Recomendações */}
       <View style={styles.botoesAbaContainer}>
@@ -134,7 +127,7 @@ const Capitulos = ({ livros_id, id }) => {
             onPress={() => setModalCapituloVisible(true)}
           >
             <Text style={[styles.textoBotaoAba, abaAtiva === 'criarCapitulo' && styles.textoBotaoAbaAtivo]}>
-              Criar Capítulo
+              <Button>Criar Capítulo</Button>
             </Text>
             {abaAtiva === 'criarCapitulo' && <View style={styles.tracoAtivo} />}
           </TouchableOpacity>
@@ -213,19 +206,30 @@ const Capitulos = ({ livros_id, id }) => {
             <TextInput
               style={styles.input}
               placeholder="Título do Capítulo"
-              value={novoCapitulo.titulo}
-              onChangeText={(text) => setNovoCapitulo({ titulo: text })}
+              value={capitulo}
+              onChangeText={setCapitulo}
             />
             <TextInput
               style={styles.input}
               placeholder="Ordem do capitulo"
-              value={novoCapitulo.titulo}
-              onChangeText={(text) => setNovoCapitulo({ titulo: text })}
+              value={ordem_capitulo}
+              onChangeText={setOrdem_Capitulo}
             />
-           
+                <View style={styles.header}>
+        <Text>Selecione um arquivo PDF</Text>
+        <Button title="Selecionar PDF" onPress={handleSelectPDF} />
+      </View>
+
+      {upload && (
+        <View style={styles.uploadedFile}>
+          <Text>Arquivo selecionado: {upload.name}</Text>
+        </View>
+      )}
             <View style={styles.modalButtons}>
               <Button title="Cancelar" onPress={() => setModalCapituloVisible(false)} />
-              <Button title="Salvar Capítulo" onPress={handleCriarCapitulo} />
+              <Button title="Salvar Capítulo" onPress={() => {
+            mutation.mutate({capitulo, ordem_capitulo, upload});
+          }} />
             </View>
           </View>
         </View>
@@ -240,9 +244,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
   },
   header: {
-    height: 240,
+    height: 260,
     position: 'relative',
-    overflow: 'hidden', // Impede que o conteúdo "vaze" para fora da área do cabeçalho
+    overflow: 'hidden',
+    justifyContent: 'center', // Centraliza os itens no eixo Y
+    alignItems: 'center', // Centraliza os itens no eixo X
   },
   backgroundImage: {
     width: '100%',
@@ -250,34 +256,30 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    resizeMode: 'cover', // Garante que a imagem se ajuste corretamente
+    resizeMode: 'cover',
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // A sobreposição com fundo semitransparente
-    justifyContent: 'flex-end', // Alinha o texto ao final da imagem
-    padding: 16, // Espaçamento para evitar que o texto encoste nas bordas
-    zIndex: 1, // Garante que o texto fique acima da imagem
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Escurece a imagem para legibilidade
   },
   headerContent: {
-    position: 'relative', // Garante que o conteúdo fique acima da imagem
-    height: '100%', // Ocupa toda a altura do cabeçalho
+    position: 'absolute',
+    alignItems: 'center', // Centraliza os textos horizontalmente
+    justifyContent: 'center', // Centraliza os textos verticalmente
+    width: '80%', // Limita a largura para melhor leitura
+    zIndex: 2,
   },
-  categoria: {
-    fontSize: 14,
-    color: '#FFF',
-    marginBottom: 8,
-  },
-  tituloPrincipal: {
-    fontSize: 19,
+  titulo: {
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#FFF',
-    marginBottom: 7,
+    textAlign: 'center',
+    marginBottom: 10,
   },
-  autor: {
-    fontSize: 14,
-    color: '#FFF',
-    marginBottom: 16,
+  sinopse: {
+    fontSize: 16,
+    color: '#DDD',
+    textAlign: 'center',
   },
   
   statsRow: {

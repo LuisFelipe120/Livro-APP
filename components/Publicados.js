@@ -18,7 +18,7 @@ const Publicados = () => {
     queryFn: getGeneros // Função que busca os gêneros da API
   });
   const [livrosComGeneros, setLivrosComGeneros] = useState([]);
-
+console.log(livros)
   useEffect(() => {
     if (livros && generos) {
       const livrosComGenerosAtualizados = livros.map((livro) => ({
@@ -54,6 +54,10 @@ const Publicados = () => {
         columnWrapperStyle={styles.row}
         renderItem={({ item }) => (          
           <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Capitulos', {
+            livroNome: item?.nome,
+            livroImagem: item?.imagem,
+            livroSinopse: item?.sinopse,
+            
             itemId: item?.id,
           })} >
             <Image source={{ uri: IMAGE_BASE_URL + item.imagem }} resizeMode='cover' style={styles.bookImage} />

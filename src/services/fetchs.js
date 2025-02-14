@@ -63,3 +63,13 @@ export const cadastrar = async (formData) => {
     throw error; // Certifique-se de lançar o erro para que a mutação possa capturá-lo
   }
 };
+export const capitulos = async (formData) => {
+  try {
+    const { data } = await api.post('/capitulos', formData);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error; // Certifique-se de lançar o erro para que a mutação possa capturá-lo
+  }
+};
+
