@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, View, Text, Image, FlatList, TouchableOpacity, Modal, TextInput, Button } from 'react-native';
+import { SafeAreaView, StyleSheet, View, Text, Image, FlatList, TouchableOpacity, Modal, TextInput, Button, ScrollView } from 'react-native';
 import { capitulos, getCapitulosLivros, getLivros, getlivrosid } from '../services/fetchs';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRoute } from '@react-navigation/native';
-import DocumentPicker from 'react-native-document-picker';
+
+
 const Capitulos = ({ livros_id, id }) => {
   // --- Todos os Hooks declarados primeiro ---
   const route = useRoute();
@@ -14,10 +15,11 @@ const Capitulos = ({ livros_id, id }) => {
   const [comentario, setComentario] = useState('');
   const [abaAtiva, setAbaAtiva] = useState('episodios');
   const IMAGE_BASE_URL = 'http://10.57.45.29:3333/images/';
-
+  const [nome, setNome] = useState('');
+    const [ordem_capitulo, setOrdem_Capitulo] = useState('');
+    const [texto, setTexto] = useState('');
   // --- useQuery para buscar dados da API ---
   const { data: capUsuario, error, isLoading } = useQuery({
-    
     queryKey: ['getCapitulosLivros', itemId],
     queryFn: () => getCapitulosLivros(itemId),
     enabled: !!itemId,
@@ -26,72 +28,32 @@ const Capitulos = ({ livros_id, id }) => {
     },
   });
 
-  // --- Verificações condicionais APÓS Hooks ---
-  if (isLoading) return <Text>Carregando...</Text>;
-  if (error) return <Text>Ocorreu um erro: {error.message}</Text>;
-
-
-
-  const handleCancelar = () => {
-    // Função chamada ao cancelar
-    setModalVisible(false);
-    setAvaliacao(0);
-    setComentario('');
-  };
-
-  const [capitulo, setCapitulo] = useState('');
-    const [ordem_capitulo, setOrdem_Capitulo] = useState('');
-    const [upload, setUpload] = useState(null);
-
+  // useMutation também deve vir antes das verificações condicionais
   const mutation = useMutation({
-    mutationFn: ({capitulo, ordem_capitulo, upload}) => {
-      const formData = new FormData();
-      
-    formData.append('capitulo', capitulo);
-    formData.append('ordem_capitulo', ordem_capitulo);
-
-
-    // Verificando se a imagem foi selecionada
-   // Verificando se o PDF foi selecionado
-   if (upload) {
-    formData.append('pdf', {
-      uri: upload.uri,
-      type: upload.type, // Tipo do arquivo, por exemplo, 'application/pdf'
-      name: upload.name, // Nome do arquivo
-    });
-  }
-      return capitulos(formData);
+    mutationFn: ({livros_id, nome, ordem_capitulo, texto }) => {
+  
+      return capitulos({livros_id, nome, ordem_capitulo, texto} );
     },
     onSuccess: async (data) => {
       console.log('Dados recebidos:', data);
 
-      // Verifica se a resposta contém os dados esperados
-      if (!data || !data.user) {
+      if (!data || !data.itemId) {
         console.error('Erro: Resposta inesperada da API', data);
         Alert.alert('Erro', 'Erro no cadastro. Tente novamente.');
         return;
       }
-    
-      // Atualiza estado de autenticação
-      setIsAuthenticated(true);
-    
-      // Mensagem de sucesso para o usuário
       Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-    }
+    },
   });
-  const handleSelectPDF = async () => {
-    try {
-      const result = await DocumentPicker.pick({
-        type: [DocumentPicker.types.pdf], // Selecionar apenas arquivos PDF
-      });
-      setUpload(result[0]);
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        console.log('Seleção de documento cancelada');
-      } else {
-        console.error('Erro ao selecionar documento', err);
-      }
-    }
+
+  // Agora as verificações condicionais vêm depois de todos os hooks
+  if (isLoading) return <Text>Carregando...</Text>;
+  if (error) return <Text>Ocorreu um erro: {error.message}</Text>;
+
+  const handleCancelar = () => {
+    setModalVisible(false);
+    setAvaliacao(0);
+    setComentario('');
   };
 
 
@@ -127,7 +89,7 @@ const Capitulos = ({ livros_id, id }) => {
             onPress={() => setModalCapituloVisible(true)}
           >
             <Text style={[styles.textoBotaoAba, abaAtiva === 'criarCapitulo' && styles.textoBotaoAbaAtivo]}>
-              <Button>Criar Capítulo</Button>
+              Criar Capitulo
             </Text>
             {abaAtiva === 'criarCapitulo' && <View style={styles.tracoAtivo} />}
           </TouchableOpacity>
@@ -187,7 +149,6 @@ const Capitulos = ({ livros_id, id }) => {
             />
             <View style={styles.modalButtons}>
               <Button title="Cancelar" onPress={handleCancelar} />
-              <Button title="Enviar Avaliação" onPress={handleAvaliar} />
             </View>
           </View>
         </View>
@@ -206,8 +167,8 @@ const Capitulos = ({ livros_id, id }) => {
             <TextInput
               style={styles.input}
               placeholder="Título do Capítulo"
-              value={capitulo}
-              onChangeText={setCapitulo}
+              value={nome}
+              onChangeText={setNome}
             />
             <TextInput
               style={styles.input}
@@ -215,20 +176,22 @@ const Capitulos = ({ livros_id, id }) => {
               value={ordem_capitulo}
               onChangeText={setOrdem_Capitulo}
             />
-                <View style={styles.header}>
-        <Text>Selecione um arquivo PDF</Text>
-        <Button title="Selecionar PDF" onPress={handleSelectPDF} />
-      </View>
-
-      {upload && (
-        <View style={styles.uploadedFile}>
-          <Text>Arquivo selecionado: {upload.name}</Text>
-        </View>
-      )}
+         <ScrollView style={styles.textoContainer}>
+              <TextInput
+                style={styles.textoInput}
+                placeholder="Escreva seu Capitulo"
+                value={texto}
+                onChangeText={setTexto}
+                multiline
+                scrollEnabled
+                numberOfLines={10} // Ajuste conforme necessário
+              />
+            </ScrollView>
+            
             <View style={styles.modalButtons}>
               <Button title="Cancelar" onPress={() => setModalCapituloVisible(false)} />
               <Button title="Salvar Capítulo" onPress={() => {
-            mutation.mutate({capitulo, ordem_capitulo, upload});
+            mutation.mutate({livros_id: itemId, nome, ordem_capitulo, texto});
           }} />
             </View>
           </View>
@@ -392,14 +355,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   modalContent: {
-    width: '80%',
+    width: '100%',
     backgroundColor: '#FFF',
-    borderRadius: 8,
     padding: 20,
-    alignItems: 'center',
+    borderRadius: 8,
   },
   modalTitle: {
     fontSize: 18,
@@ -420,6 +382,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     width: '100%',
   },
+  textoContainer: {
+    marginVertical: 10,
+  },
+  textoInput: {
+    height: 150,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    textAlignVertical: 'top',
+    backgroundColor: '#FFF',
+  }
 });
 
 export default Capitulos;
